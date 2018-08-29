@@ -1,7 +1,7 @@
 ---
 title: Unifying Regularization Term in Auto-encoder
 key: 2018082901
-tags: Deep Learning, Generative Learning, Auto-encoder, Adversarial
+tags: DeepLearning GenerativeLearning Auto-encoder Adversarial
 category: blog
 
 ---
