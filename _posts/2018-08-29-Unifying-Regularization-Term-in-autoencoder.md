@@ -3,7 +3,6 @@ title: Unifying Regularization Term in Auto-encoder
 key: 2018082901
 tags: DeepLearning GenerativeLearning Auto-encoder Adversarial
 category: blog
-
 ---
 
 ## Generative Adversarial Networks (GAN)
