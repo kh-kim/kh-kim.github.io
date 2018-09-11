@@ -18,14 +18,18 @@ condition이 없을 때보다 reconstruction도 월등함.
 
 ![](/assets/images/cvae_exp/cvae_valid.png)
 
-생각보다 latent space의 2-dimension traversal에서 명확한 feature가 보이지 않음.
+생각보다 latent space의 2-dimension traversal에서 명확한 feature가 보이지 않음. 자신에게 맞는 style상에서만 제대로된 모습을 보임. z에서는 고루 분포되어 있는데 왜 일부분에서만 잘 generation되는지 의문.
 
+condition: 1 generation
 ![](/assets/images/cvae_exp/cvae_travel-1.png)
 
+condition: 2 generation
 ![](/assets/images/cvae_exp/cvae_travel-2.png)
 
+condition: 5 generation
 ![](/assets/images/cvae_exp/cvae_travel-5.png)
 
+condition: 6 generation
 ![](/assets/images/cvae_exp/cvae_travel-9.png)
 
 ## Condition Embedded Variational Autoencoder
