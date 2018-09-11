@@ -1,6 +1,6 @@
 ---
 title: Generative Probabilistic Novelty Detection with Adversarial Autoencoders
-key: 2018082901
+key: 2018090601
 tags: DeepLearning GenerativeLearning Auto-encoder Adversarial
 category: blog
 ---
