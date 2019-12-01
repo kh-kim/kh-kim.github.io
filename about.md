@@ -24,9 +24,9 @@ My original specialty is Natural Language Generation, such as [Neural Machine Tr
 
 ## Career
 
-|Period|Company|Position|
+| Period | Company | Position |
 |-|-|-|
-|2018-07 ~ Current|MakinaRocks|Principal Engineer|
-|2017-02 ~ 2018-07|SK Planet|ML Researcher|
-|2015-12 ~ 2017-01|Ticketmonster|ML Engineer|
-|2011-10 ~ 2015-11|ETRI|Researcher|
+| 2018-07 ~ Current | MakinaRocks | Principal ML Research Engineer |
+| 2017-02 ~ 2018-07 | SK Planet | ML Researcher |
+| 2015-12 ~ 2017-01 | Ticketmonster | ML Engineer |
+| 2011-10 ~ 2015-11 | Electronics and Telecommunications Research Institute(ETRI) | Researcher |
