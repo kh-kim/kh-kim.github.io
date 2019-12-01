@@ -10,7 +10,9 @@ key: page-about
 
 Hi folks,
 
-This is Ki and I am currently principal machine learning engineer at [MakinaRocks](http://makinarocks.ai). My specialty is Natural Language Generation, such as [Neural Machine Translation (NMT)](https://github.com/kh-kim/simple-nmt). I have many experiences about NLP research and productization, such as [GenieTalk(Automatic Speech Translator)](https://itunes.apple.com/kr/app/%EB%A7%90%EB%9E%91%EB%A7%90%EB%9E%91-%EC%A7%80%EB%8B%88%ED%86%A1-genietalk-%ED%86%B5%EC%97%AD-%EB%B2%88%EC%97%AD/id1104930501?mt=8) and [e-commerce Machine Translation](http://global.11st.co.kr/html/en/main_en.html?trlang=en). Moreover, I am teaching a [class](http://www.fastcampus.co.kr/data_camp_nlpadv/) and writing a [book](https://kh-kim.gitbook.io/natural-language-processing-with-pytorch/) about NLG. Also, I have experiences about Recommender System and Reinforcement Learning. At Makinarocks, I am focusing on the generative learning for novelty detection in unsupervised scheme.
+This is Ki and I am currently a principal machine learning research engineer at [MakinaRocks](http://makinarocks.ai). In recent years, I am focusing on Anomaly Detection in Industrial Manufacturing -- [Talks on DEVIEW 2019](https://deview.kr/2019/schedule/286).
+
+My original specialty is Natural Language Generation, such as [Neural Machine Translation (NMT)](https://github.com/kh-kim/simple-nmt). I have many experiences in NLP research and productions. Through many years of experience, I wrote a [book](http://www.yes24.com/Product/Goods/74802622) about NLP, and I am running a class for NLP and NLG. 
 
 ## Contact
 
