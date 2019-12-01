@@ -16,11 +16,11 @@ My original specialty is Natural Language Generation, such as [Neural Machine Tr
 
 ## Contact
 
-|Name|Kim, Ki Hyun|
+| Name | Kim, Ki Hyun |
 |-|-|
-|Email|pointzz.ki@gmail.com|
-|LinkedIn|[https://www.linkedin.com/in/ki-hyun-kim/](https://www.linkedin.com/in/ki-hyun-kim/)|
-|GitHub|[https://github.com/kh-kim/](https://github.com/kh-kim/)|
+| Email | pointzz.ki@gmail.com |
+| LinkedIn | [https://www.linkedin.com/in/ki-hyun-kim/](https://www.linkedin.com/in/ki-hyun-kim/) |
+| GitHub | [https://github.com/kh-kim/](https://github.com/kh-kim/) |
 
 ## Career
 
@@ -29,4 +29,4 @@ My original specialty is Natural Language Generation, such as [Neural Machine Tr
 | 2018-07 ~ Current | MakinaRocks | Principal ML Research Engineer |
 | 2017-02 ~ 2018-07 | SK Planet | ML Researcher |
 | 2015-12 ~ 2017-01 | Ticketmonster | ML Engineer |
-| 2011-10 ~ 2015-11 | Electronics and Telecommunications Research Institute(ETRI) | Researcher |
+| 2011-10 ~ 2015-11 | ETRI | Researcher |
