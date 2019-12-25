@@ -47,7 +47,7 @@ category: blog
 먼저 우리는 매니폴드(Manifold) 가설 관점에서 생각해 볼 수 있습니다.
 아래의 수식 및 설명은 NIPS 2018에서 발표된 [GPND(Generative Probabilistic Novelty Detection with Adversarial Autoencoders)](https://arxiv.org/abs/1807.02588) 것으로 매니폴드와 오토인코더의 관계를 잘 설명해 줍니다.
 
-![매니폴드와 오토인코더의 관계 -- 출처: GPND]()
+![매니폴드와 오토인코더의 관계 -- 출처: GPND](/assets/images/20191215/2.png)
 
 위의 설명에 따르면 우리에게 주어진 데이터 샘플 $x$ 는 매니폴드 $f(z)$ 에 노이즈 $\xi$ 가 더해진 형태가 됩니다.
 
