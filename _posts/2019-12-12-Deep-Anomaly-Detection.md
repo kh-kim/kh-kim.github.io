@@ -172,7 +172,7 @@ OOD(Out-of-distribution) 문제는 이러한 문제를 해결하고자 합니다
 하지만 anomaly detection의 경우에는 (supervised learning에 기반하지 않기 때문에) 클래스별 확률값이 아닌, 샘플 자체에 대한 anomaly score가 주어지는 경우가 많습니다.
 따라서 anomaly score에 대한 threshold 설정이 필요합니다.
 
-![정상 데이터의 anomaly score 분포와 비정상 데이터의 anomaly score 분포]()
+![정상 데이터의 anomaly score 분포와 비정상 데이터의 anomaly score 분포](/assets/images/20191212/5.png)
 
 예를 들어 우리는 테스트 데이터셋에 대해서 위와 같이 anomaly score들을 구하여 anomaly score의 분포로 만들어 볼 수 있습니다.
 이때 두 분포가 충분히 겹쳐있지 않다면, 두 분포 사이를 잘 가로지르는 threshold를 설정할 수 있습니다.
