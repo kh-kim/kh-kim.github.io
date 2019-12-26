@@ -61,11 +61,14 @@ PCA는 데이터의 분포에 따라 그 분산을 가장 최대로 하는 축�
 우리는 보통 SVD(singular value decomposition)을 통해 PCA를 수행할 수 있습니다.
 좀 더 자세한 설명은 SVD에 대한 내용을 찾아보시기 바랍니다.
 
-![PCA가 수행된 예제]()
+![PCA가 수행된 예제](/assets/images/20191212/2.png)
 
 우리는 이처럼 선형적으로 차원을 축소할 수 있습니다.
 이때 샘플들은 선택된 축들로 projection(투사)됩니다.
 이렇게 낮은 차원의 공간들에 존재하는 샘플들을 다시 원래 높은 차원의 공간으로 복원하게 되었을 때, 차원 축소 전 원래의 샘플의 위치와 비교하여 거리가 먼 샘플은 비정상이라고 판별하게 됩니다.
+
+![PCA에서 비정상 샘플을 판별하는 예제](/assets/images/20191212/3.png)
+
 이를 수식으로 나타내면 다음과 같이 표현할 수 있을 겁니다.
 
 $$
@@ -89,12 +92,12 @@ $$
 이와 같이 PCA를 통해 우리는 anomaly detection을 수행할 수 있습니다.
 하지만 많은 경우에 PCA는 훌륭하게 동작하지만, 아래와 같은 경우에는 잘 동작하지 않을 수 있습니다.
 
-![PCA에서 해결할 수 없는 이상 데이터의 예]()
+![PCA에서 해결할 수 없는 이상 데이터의 예](/assets/images/20191212/4.png)
 
 또한 만약 데이터의 분포가 아래와 같다면, 선형적인 축소 방식으로 인해서 우리는 PCA를 통해 성공적인 anomaly detection을 수행하지 못할 것 입니다.
 따라서 우리는 딥러닝을 통해 비선형적인 데이터에 대해서 anomaly detection을 수행하고자 합니다.
 
-![PCA에서 해결할 수 없는 비선형 데이터의 분포]()
+![PCA에서 해결할 수 없는 비선형 데이터의 분포](/assets/images/20191212/5.png)
 
 ## Problem Setups in Anomaly Detection
 
@@ -172,7 +175,7 @@ OOD(Out-of-distribution) 문제는 이러한 문제를 해결하고자 합니다
 하지만 anomaly detection의 경우에는 (supervised learning에 기반하지 않기 때문에) 클래스별 확률값이 아닌, 샘플 자체에 대한 anomaly score가 주어지는 경우가 많습니다.
 따라서 anomaly score에 대한 threshold 설정이 필요합니다.
 
-![정상 데이터의 anomaly score 분포와 비정상 데이터의 anomaly score 분포](/assets/images/20191212/5.png)
+![정상 데이터의 anomaly score 분포와 비정상 데이터의 anomaly score 분포](/assets/images/20191212/6.png)
 
 예를 들어 우리는 테스트 데이터셋에 대해서 위와 같이 anomaly score들을 구하여 anomaly score의 분포로 만들어 볼 수 있습니다.
 이때 두 분포가 충분히 겹쳐있지 않다면, 두 분포 사이를 잘 가로지르는 threshold를 설정할 수 있습니다.
