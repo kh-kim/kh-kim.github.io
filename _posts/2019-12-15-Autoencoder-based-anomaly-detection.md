@@ -11,7 +11,7 @@ category: blog
 오토인코더는 입력을 그대로 출력(복원)해내도록 하는 목적 함수를 갖습니다.
 따라서 보통 MSE 손실 함수를 사용하며, 중간에 bottle-neck(병목)이 있어 고차원 공간 상의 입력 데이터를 저차원의 공간으로 맵핑(mapping)하여 잠재적인 변수로 표현(latent representation)하였다가, 다시 입력과 같은 고차원의 공간으로 복원해내야 합니다.
 
-![오토인코더의 동작 예]()
+![오토인코더의 동작 예](/assets/images/20191215/1.png)
 
 여기서 인코더와 디코더는 여러개의 non-linear 계층을 가질 수 있으며, non-linear activation function을 없애서 linear한 형태로 오토인코더를 구성할 경우 PCA 처럼 동작하게 됩니다.
 
