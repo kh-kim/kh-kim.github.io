@@ -87,7 +87,7 @@ $P(z)$ 를 보는 것은 unimodal normality case를 가정한 문제 정의 아�
 따라서 위의 unimodal normality case 가정을 따른 논문들은 $P(z)$ 를 anomaly score를 구하는데 사용합니다. [1]
 하지만 아래의 그림과 같이 이런 가정은 multimodal normality case에서는 동작하지 않을 수 있습니다.
 
-![$P(z)$ 를 gaussian distribution으로 가정하면 확률 밀도 값을 쉽게 구할 수 있지만, multimodal normality case에서 동작하지 않을 수 있습니다.](/assets/images/20191215/4.png)
+![P(z) 를 gaussian distribution으로 가정하면 확률 밀도 값을 쉽게 구할 수 있지만, multimodal normality case에서 동작하지 않을 수 있습니다.](/assets/images/20191215/4.png)
 
 다른 관점에서 $P(x)\varpropto{P(z)}$ 에 대한 간단한 반례에 대해 생각해 볼 수 있습니다.
 우리는 기본적으로 복원 오차(reconstruction error)를 활용하여 anomaly score를 구합니다.
