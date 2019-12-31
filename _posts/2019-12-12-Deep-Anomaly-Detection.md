@@ -121,7 +121,7 @@ OOD(Out-of-distribution) 문제는 이러한 문제를 해결하고자 합니다
 보통 OOD 알고리즘을 평가하기 위해서는 두 개 이상의 데이터셋이 있을 때, 하나의 데이터셋만을 학습한 신경망에 학습에 참여하지 않은 데이터셋이 주어지는 형태로 실험이 진행 됩니다.
 즉, MNIST를 학습한 신경망에 MNIST와 F-MNIST가 주어진다면 신경망이 이를 구분해 낼 수 있는지 여부가 중요하게 적용됩니다.
 (한마디로 데이터셋 분류기랄까요?)
-결과적으로 우리는 이미지 분류기를 통과하기에 앞서, 주어진 입력을 OOD 모델을 통해 적합한지 따져볼 수 있을 것 입니다.
+결과적으로 우리는 이미지 분류기를 통과하기에 앞서, 주어진 입력을 OOD 모델을 통해 적합한지 따져볼 수 있을 것 입니다. -- 추가로 OOD는 adversarial attack과 연관지어 연구가 이루어지기도 합니다.
 
 ### Semi-supervised Anomaly Detection
 
@@ -140,6 +140,7 @@ OOD(Out-of-distribution) 문제는 이러한 문제를 해결하고자 합니다
 먼저 우리는 정상의 패턴이 하나이고, 비정상 패턴이 다양한 형태를 상상해 볼 수 있습니다.
 예를 들어 MNIST의 경우에 임의의 숫자 클래스 하나를 정상 데이터로 가정하고 학습을 진행합니다.
 이후에 테스트 과정에서 10가지 클래스 모두를 포함하여 모델이 정상 클래스와 비정상 클래스를 잘 구별하는지 테스트할 수 있을 것입니다.
+이 케이스는 one-class classification 이라는 이름으로도 널리 알려져 있습니다.
 
 #### Multimodal normality case
 
@@ -244,3 +245,20 @@ MSE 손실 함수는 불확실한 부분에 대해서는 평균값으로 예측�
 
 이번 포스트에서는 anomaly detection에 대해 소개하고, 다양한 문제 정의와 이를 해결하기 위한 딥러닝 알고리즘들을 소개하였습니다.
 추후 이어질 포스팅에서는 각각의 알고리즘에 대해서 좀 더 자세히 소개하고자 합니다.
+
+## References
+
+[1] Ki Hyun Kim, Operational AI: Building a Lifelong Learning Anomaly Detection System, DEVIEW, 2019
+[2] Jinwon An et al., Variational Autoencoder based Anomaly Detection
+using Reconstruction Probability, SNU Data Mining Center, 2015
+[3] Anh Nguyen et al., Deep Neural Networks are Easily Fooled: High Confidence Predictions for Unrecognizable Images, CVPR, 2015
+[4] Ian J. Goodfellow et al., Explaining and Harnessing Adversarial Examples, Arxiv, 2014
+[5] Ki Hyun Kim et al., RaPP: Novelty Detection with Reconstruction along Projection Pathway, ICLR, 2020
+[6] Stanislav Pidhorskyi et al., Generative Probabilistic Novelty Detection with Adversarial Autoencoders, NeurIPS, 2018
+[7] Lukas Ruff et al., Deep One-Class Classification, ICML, 2018
+[8] Siqi Wang et al., Effective End-to-end Unsupervised Outlier Detection via Inlier Priority of Discriminative Network, NeurIPS, 2019
+[9] Thomas Schlegl et al., Unsupervised Anomaly Detection with Generative Adversarial Networks to Guide Marker Discovery, Arxiv, 2017
+[10] Houssam Zenati et al., Efficient GAN-Based Anomaly Detection, Arxiv, 2018
+[11] Ilyass Haloui et al., Anomaly detection with Wasserstein GAN, 2018
+[12] Izhak Golan et al., Deep Anomaly Detection Using Geometric Transformations, NeurIPS, 2018
+[13] Liron Bergman et al., Classification-Based Anomaly Detection for General Data, ICLR, 2020
