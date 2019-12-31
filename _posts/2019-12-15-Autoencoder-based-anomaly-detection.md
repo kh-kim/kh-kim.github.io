@@ -45,7 +45,7 @@ category: blog
 ### Manifold Hypothesis
 
 먼저 우리는 매니폴드(Manifold) 가설 관점에서 생각해 볼 수 있습니다.
-아래의 수식 및 설명은 NIPS 2018에서 발표된 [GPND(Generative Probabilistic Novelty Detection with Adversarial Autoencoders)](https://arxiv.org/abs/1807.02588) 것으로 매니폴드와 오토인코더의 관계를 잘 설명해 줍니다.
+아래의 수식 및 설명은 NIPS 2018에서 발표된 [GPND(Generative Probabilistic Novelty Detection with Adversarial Autoencoders)](https://arxiv.org/abs/1807.02588) [1] 에서 제시한 방법으로 매니폴드와 오토인코더의 관계를 잘 설명해 줍니다.
 
 ![매니폴드와 오토인코더의 관계 -- 출처: GPND](/assets/images/20191215/2.png)
 
@@ -59,13 +59,13 @@ $$x=f(z)+\xi$$
 
 ![빨간색 점이 매니폴드 표면의 노란색 점으로 투사된 예제](/assets/images/20191215/3.png)
 
-다르게 표현하면, 오토인코더에 샘플을 통과시키는 것은 매니폴드 표면 $\mathcal{M}$ 에 투사(projection)하는 과정이라고 볼 수 있고, 이는 디노이징이라고 볼 수 있으며, 그 결과 복원 오차(reconstruction error)가 발생하는 것이라고 볼 수 있습니다.
+다르게 표현하면, 오토인코더에 샘플을 통과시키는 것은 매니폴드 표면 $\mathcal{M}$ 에 투사(projection)하는 과정[2]이라고 볼 수 있고, 이는 디노이징이라고 볼 수 있으며, 그 결과 복원 오차(reconstruction error)가 발생하는 것이라고 볼 수 있습니다.
 
 ### Latent space
 
 오토인코더는 학습 데이터 내에서 샘플을 잘 설명할 수 있는 특징(feature)을 추출해냅니다.
 이것은 PCA에서 분산(variance)을 최대화 하는 방향으로 PC를 찾는 것과 비슷하다고 볼 수 있을 것입니다.
-좁은 bottle-neck을 통과해야 하기 때문에, 정보량이 높은 특징들을 우선적으로 추출해 낼것 입니다.
+좁은 bottle-neck을 통과해야 하기 때문에, 정보량이 높은 특징들을 우선적으로 추출해 낼것 입니다. [3, 5, 6]
 결과적으로 인코더의 레이어를 통과하면서 복원에 덜 필요한 특징들은 버려지게 됩니다.
 즉, 각 레이어의 결과물들은 복원에 필요한 정보들이 남아있게 됩니다.
 
@@ -82,11 +82,14 @@ $$x=f(z)+\xi$$
 따라서 정상 특징들의 조합으로 이루어진 비정상 샘플의 hidden representation은 정상 샘플의 그것과 크게 다르다는 보장이 없습니다.
 따라서 $P(z)$ 를 활용하여 $P(x)$ 가 낮은 것을 판별하는 것은 쉽지 않은 일이 될 것 입니다.
 
-> 하지만 unimodal normality case를 가정한 문제 정의 아래에서는 괜찮은 접근 방법일 수 있습니다.
+$P(z)$ 를 보는 것은 unimodal normality case를 가정한 문제 정의 아래에서는 괜찮은 접근 방법일 수 있습니다.
 정상 데이터의 패턴이 크게는 하나라고 볼 수 있기 때문에, $P(x)$ 를 gaussian distribution 형태의 $P(z)$ 로 mapping 할 수 있고, 이때에는 $P(x)\varpropto{P(z)}$ 라고 가정하는 것은 가능합니다.
-따라서 위의 unimodal normality case 가정을 따른 많은 논문들은 $P(z)$ 를 anomaly score를 구하는데 사용합니다.
+따라서 위의 unimodal normality case 가정을 따른 논문들은 $P(z)$ 를 anomaly score를 구하는데 사용합니다. [1]
+하지만 아래의 그림과 같이 이런 가정은 multimodal normality case에서는 동작하지 않을 수 있습니다.
 
-다른 관점에서 $P(x)\varpropto{P(z)}$ 에 대한 간단한 counter example을 생각해 볼 수 있습니다.
+![$P(z)$ 를 gaussian distribution으로 가정하면 확률 밀도 값을 쉽게 구할 수 있지만, multimodal normality case에서 동작하지 않을 수 있습니다.](/assets/images/20191215/3.png)
+
+다른 관점에서 $P(x)\varpropto{P(z)}$ 에 대한 간단한 반례에 대해 생각해 볼 수 있습니다.
 우리는 기본적으로 복원 오차(reconstruction error)를 활용하여 anomaly score를 구합니다.
 
 만약 우리에게 정상 샘플 $x$ 가 있고, 이를 복원한 샘플 $\hat{x}$ 이 있다고 해보겠습니다.
@@ -99,7 +102,7 @@ $$x=f(z)+\xi$$
 
 ## Variational Autoencoders
 
-2014년 Kingma는 [Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114)라는 논문을 통해 VAE(Variational Autoencoders)를 발표합니다.
+2014년 Kingma는 [Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114) [4]라는 논문을 통해 VAE(Variational Autoencoders)를 발표합니다.
 이 논문에서 VAE는 reparameterization trick을 활용하여 인코더가 뱉어낸 분포의 파라미터( $\mu,\sigma$ )로부터 latent variable $z$ 를 샘플링하고,
 이로부터 posterior distribution $p(x|z)$ 를 근사(approximate)합니다.
 이 과정에서 유도된 수식에 의해 KL-divergence 항이 추가 되어 regularization 역할을 수행합니다.
@@ -113,12 +116,12 @@ $$
 ### Variational Information Bottleneck
 
 이때 VAE의 KLD term은 이상 탐지에서 매우 훌륭한 역할을 수행합니다.
-Information bottleneck theory는 심층신경망이 학습되는 원리에 대해서 설명하고자 하는 이론입니다.
+Information bottleneck theory [3, 5, 6]는 심층신경망이 학습되는 원리에 대해서 설명하고자 하는 이론입니다.
 오토인코더의 병목 구간과 같이 차원 축소의 과정에서 중요한 특징(feature)을 추출하는 방법이 자동으로 학습될 수 있다는 내용입니다.
 (사실 우리는 오토인코더가 아니더라도 보통 차원 축소가 되도록 신경망을 구성합니다.)
 이 정보의 병목(information bottleneck)은 자연스럽게 각 레이어별로 mutual information이 최대화 되도록 하며, 이 과정에서 mutual information을 최대화 하는 것과 상관 없는 특징들은 자연스럽게 떨어져 나갑니다.
 
-VAE의 흥미로운 점은 Variational Information Bottleneck (VIB)을 제공한다는 점 입니다.
+VAE의 흥미로운 점은 Variational Information Bottleneck (VIB) [7]을 제공한다는 점 입니다.
 오토인코더(AE)는 물리적으로 레이어의 출력 유닛 갯수를 점차 줄여나가며 병목 구간에서 최종적인 information bottleneck을 걸게 되지만, VIB는 수식에 의해서 자연스럽게 가상의 information bottleneck을 갖게 됩니다.
 
 VAE의 수식에는 KLD 항 $\text{KL}\big(p(\text{z}|x)||p(\text{z})\big)$ 이 있는데요, $\log{p(x)}$ 을 최대화 하기 위해서는 자연스럽게 KLD 항을 최소화 해야 합니다.
@@ -149,6 +152,37 @@ $$
 이 과정에서 만약 극단적으로 KLD가 0이 된다면 $x$ 와 $z$ 는 독립이 될 것이므로, reconstruction error가 커질 것이고 $\log{p(x)}$ 를 최대화 하지 못할 것입니다.
 따라서 적당히 $x$ 와 $z$ 의 MI를 유지하는 선에서 KLD를 최소화 하기 위해서, 복원(reconstruction)에 상관없는 특징 정보부터 버릴 것입니다.
 
+### Anomaly Detection with Variational Autoencoders
+
 이처럼 VIB는 훌륭한 regularizer로 오버피팅을 막아주며, 결과적으로 이것은 마치 주어진 상황에서 최적의 병목 구간 크기를 갖게 하는 효과를 갖습니다.
 VIB를 통해 VAE는 vanilla 오토인코더에 비해 훨씬 나은 성능의 이상탐지(anomaly detection) 성능을 제공합니다.
 실험을 통해 우리는 기존의 AE는 너무 큰 bottleneck을 가지면 identity function이 되며 이상탐지 성능이 떨어지는 것에 반해, VAE는 bottleneck의 크기가 커질수록 이상탐지 성능이 오르는 효과를 갖는 것을 확인할 수 있었습니다.
+
+### Anomaly Detection with Adversarial Autoencoders
+
+Adversarial Autoencoders(AAE) [9]는 VAE 만큼 널리 쓰이는 오토인코더 중에 하나이며, 마찬가지로 anomaly detection에서도 널리 활용되고 있습니다. [10]
+VAE는 최적화 과정에서 KLD term을 작게 만들기 위해 latent distribution을 gaussian의 형태에 가까워지지만, 실제 gaussian 분포를 따르지는 않습니다.
+하지만 AAE는 latent distribution을 검사하는 discriminator를 도입하여, 원하는 형태의 latent distribution을 강제시킬 수 있습니다.
+이러한 특성은 unimodal normality 가정과 함께 쓰이면 $P(z)$ 를 구하는데 용이하게 사용될 수 있습니다. [10]
+
+## Summary
+
+오토인코더는 고차원인 입력 차원에서 저차원인 병목 구간의 차원으로 맵핑 과정을 압축과 해제를 반복하며 학습합니다.
+이 과정에서 information bottleneck이 만들어지게 되며, 자동으로 입력 샘플 복원을 위한 중요한 특징(feature)과 중요하지 않은 특징을 구분할 수 있는 능력을 학습합니다. — 이것은 매니폴드 가설에 의해서도 설명이 가능합니다.
+하지만 정상 데이터만을 활용하여 고차원에서 저차원의 맵핑 과정을 학습하기 때문에, 잠재공간(latent space)의 정보를 활용하여 anomaly detection을 수행하는 것은 새로운 가정을 도입하는 것(unimodal normality)입니다.
+따라서 보통은 잠재공간의 정보를 활용하지 않습니다. [8]
+또한 VAE를 통해 anonamly detection을 수행하게 되면 VIB의 특성을 활용하여 가장 큰 hyper-parameter인 bottleneck 크기를 튜닝할 필요가 없어집니다.
+추가로 $P(z)$ 를 활용하고자 할 때, AAE를 사용하게 되면 latent의 분포를 gaussian과 같은 형태로 강제할 수 있어, latent variable의 확률값을 구하는데 활용 가능합니다.
+
+## References
+
+- [1] Stanislav Pidhorskyi et al., Generative Probabilistic Novelty Detection with Adversarial Autoencoders, NeurIPS, 2018
+- [2] Lei et al., Geometric Understanding of Deep Learning, Arxiv, 2018
+- [3] Tishby et al., The information bottleneck method, Annual Allerton Conference on Communication, Control and Computing, 1999
+- [4] Kingma et al., Auto-Encoding Variational Bayes, ICLR, 2014
+- [5] Tishby, Information Theory of Deep Learning, https://youtu.be/bLqJHjXihK8
+- [6] Tishby et al., Deep learning and the information bottleneck principle, IEEE Information Theory Workshop (ITW), 2015
+- [7] Alemi et al., Deep Variational Information Bottleneck, ICLR, 2017
+- [8] Ki Hyun Kim et al., Rapp: Novelty Detection with Reconstruction along Projection Pathway, ICLR, 2020
+- [9] Makhzani et al., Adversarial autoencoders. Arxiv, 2015.
+- [10] Stanislav Pidhorskyi et al., Generative Probabilistic Novelty Detection with Adversarial Autoencoders, NeurIPS, 2018
