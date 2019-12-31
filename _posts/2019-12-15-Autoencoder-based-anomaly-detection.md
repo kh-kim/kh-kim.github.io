@@ -87,7 +87,7 @@ $P(z)$ 를 보는 것은 unimodal normality case를 가정한 문제 정의 아�
 따라서 위의 unimodal normality case 가정을 따른 논문들은 $P(z)$ 를 anomaly score를 구하는데 사용합니다. [1]
 하지만 아래의 그림과 같이 이런 가정은 multimodal normality case에서는 동작하지 않을 수 있습니다.
 
-![$P(z)$ 를 gaussian distribution으로 가정하면 확률 밀도 값을 쉽게 구할 수 있지만, multimodal normality case에서 동작하지 않을 수 있습니다.](/assets/images/20191215/3.png)
+![$P(z)$ 를 gaussian distribution으로 가정하면 확률 밀도 값을 쉽게 구할 수 있지만, multimodal normality case에서 동작하지 않을 수 있습니다.](/assets/images/20191215/4.png)
 
 다른 관점에서 $P(x)\varpropto{P(z)}$ 에 대한 간단한 반례에 대해 생각해 볼 수 있습니다.
 우리는 기본적으로 복원 오차(reconstruction error)를 활용하여 anomaly score를 구합니다.
@@ -105,13 +105,14 @@ $P(z)$ 를 보는 것은 unimodal normality case를 가정한 문제 정의 아�
 2014년 Kingma는 [Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114) [4]라는 논문을 통해 VAE(Variational Autoencoders)를 발표합니다.
 이 논문에서 VAE는 reparameterization trick을 활용하여 인코더가 뱉어낸 분포의 파라미터( $\mu,\sigma$ )로부터 latent variable $z$ 를 샘플링하고,
 이로부터 posterior distribution $p(x|z)$ 를 근사(approximate)합니다.
+
+![VAE의 동작 원리](/assets/images/20191215/5.png)
+
 이 과정에서 유도된 수식에 의해 KL-divergence 항이 추가 되어 regularization 역할을 수행합니다.
 
 $$
 \log{p(x)}\ge\mathbb{E}_{\text{z}\sim{p(z|x;\theta)}}\big[\log{p(x|\text{z};\phi)}\big]-\text{KL}\big(p(\text{z}|x;\theta)||p(\text{z})\big)
 $$
-
-덕분에 우리는 latent space 상에서 데이터의 분포 $p(z)$ 를 gaussian 분포로 근사시킬 수 있었고, 이 논문은 이후 수많은 논문들에게 좋은 영감을 주었습니다.
 
 ### Variational Information Bottleneck
 
@@ -157,6 +158,7 @@ $$
 이처럼 VIB는 훌륭한 regularizer로 오버피팅을 막아주며, 결과적으로 이것은 마치 주어진 상황에서 최적의 병목 구간 크기를 갖게 하는 효과를 갖습니다.
 VIB를 통해 VAE는 vanilla 오토인코더에 비해 훨씬 나은 성능의 이상탐지(anomaly detection) 성능을 제공합니다.
 실험을 통해 우리는 기존의 AE는 너무 큰 bottleneck을 가지면 identity function이 되며 이상탐지 성능이 떨어지는 것에 반해, VAE는 bottleneck의 크기가 커질수록 이상탐지 성능이 오르는 효과를 갖는 것을 확인할 수 있었습니다.
+따라서 AE 기반의 anomaly detection을 수행할 때, 기존에는 bottleneck의 크기를 hyper-parameter로 튜닝해야 했던 반면에, VAE의 경우에는 튜닝을 할 필요가 거의 없어졌습니다.
 
 ### Anomaly Detection with Adversarial Autoencoders
 
