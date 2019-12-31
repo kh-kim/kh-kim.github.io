@@ -248,17 +248,17 @@ MSE 손실 함수는 불확실한 부분에 대해서는 평균값으로 예측�
 
 ## References
 
-[1] Ki Hyun Kim, Operational AI: Building a Lifelong Learning Anomaly Detection System, DEVIEW, 2019
-[2] Jinwon An et al., Variational Autoencoder based Anomaly Detection
+- [1] Ki Hyun Kim, Operational AI: Building a Lifelong Learning Anomaly Detection System, DEVIEW, 2019
+- [2] Jinwon An et al., Variational Autoencoder based Anomaly Detection
 using Reconstruction Probability, SNU Data Mining Center, 2015
-[3] Anh Nguyen et al., Deep Neural Networks are Easily Fooled: High Confidence Predictions for Unrecognizable Images, CVPR, 2015
-[4] Ian J. Goodfellow et al., Explaining and Harnessing Adversarial Examples, Arxiv, 2014
-[5] Ki Hyun Kim et al., RaPP: Novelty Detection with Reconstruction along Projection Pathway, ICLR, 2020
-[6] Stanislav Pidhorskyi et al., Generative Probabilistic Novelty Detection with Adversarial Autoencoders, NeurIPS, 2018
-[7] Lukas Ruff et al., Deep One-Class Classification, ICML, 2018
-[8] Siqi Wang et al., Effective End-to-end Unsupervised Outlier Detection via Inlier Priority of Discriminative Network, NeurIPS, 2019
-[9] Thomas Schlegl et al., Unsupervised Anomaly Detection with Generative Adversarial Networks to Guide Marker Discovery, Arxiv, 2017
-[10] Houssam Zenati et al., Efficient GAN-Based Anomaly Detection, Arxiv, 2018
-[11] Ilyass Haloui et al., Anomaly detection with Wasserstein GAN, 2018
-[12] Izhak Golan et al., Deep Anomaly Detection Using Geometric Transformations, NeurIPS, 2018
-[13] Liron Bergman et al., Classification-Based Anomaly Detection for General Data, ICLR, 2020
+- [3] Anh Nguyen et al., Deep Neural Networks are Easily Fooled: High Confidence Predictions for Unrecognizable Images, CVPR, 2015
+- [4] Ian J. Goodfellow et al., Explaining and Harnessing Adversarial Examples, Arxiv, 2014
+- [5] Ki Hyun Kim et al., RaPP: Novelty Detection with Reconstruction along Projection Pathway, ICLR, 2020
+- [6] Stanislav Pidhorskyi et al., Generative Probabilistic Novelty Detection with Adversarial Autoencoders, NeurIPS, 2018
+- [7] Lukas Ruff et al., Deep One-Class Classification, ICML, 2018
+- [8] Siqi Wang et al., Effective End-to-end Unsupervised Outlier Detection via Inlier Priority of Discriminative Network, NeurIPS, 2019
+- [9] Thomas Schlegl et al., Unsupervised Anomaly Detection with Generative Adversarial Networks to Guide Marker Discovery, Arxiv, 2017
+- [10] Houssam Zenati et al., Efficient GAN-Based Anomaly Detection, Arxiv, 2018
+- [11] Ilyass Haloui et al., Anomaly detection with Wasserstein GAN, 2018
+- [12] Izhak Golan et al., Deep Anomaly Detection Using Geometric Transformations, NeurIPS, 2018
+- [13] Liron Bergman et al., Classification-Based Anomaly Detection for General Data, ICLR, 2020
