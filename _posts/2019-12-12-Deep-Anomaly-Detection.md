@@ -122,13 +122,13 @@ OOD(Out-of-distribution) 문제는 이러한 문제를 해결하고자 합니다
 보통 OOD 알고리즘을 평가하기 위해서는 두 개 이상의 데이터셋이 있을 때, 하나의 데이터셋만을 학습한 신경망에 학습에 참여하지 않은 데이터셋이 주어지는 형태로 실험이 진행 됩니다.
 즉, MNIST를 학습한 신경망에 MNIST와 F-MNIST가 주어진다면 신경망이 이를 구분해 낼 수 있는지 여부가 중요하게 적용됩니다.
 (한마디로 데이터셋 분류기랄까요?)
-결과적으로 우리는 이미지 분류기를 통과하기에 앞서, 주어진 입력을 OOD 모델을 통해 적합한지 따져볼 수 있을 것 입니다. -- 추가로 OOD는 adversarial attack과 연관지어 연구가 이루어지기도 합니다.
+결과적으로 우리는 이미지 분류기를 통과하기에 앞서, 주어진 입력을 OOD 모델을 통해 적합한지 따져볼 수 있을 것 입니다. -- 추가로 OOD는 adversarial attack과 연관지어 연구가 이루어지기도 합니다. [3, 4]
 
 ### Semi-supervised Anomaly Detection
 
 다음은 마키나락스가 주로 다루는 주제에 대해 소개하고자 합니다.
-보통 anomaly detection이라하면 이 문제에 대해서 이야기 하는 것 입니다.
-널리 사용되는 만큼 이외에도 outlier detection, novelty detection과 같은 다양한 이름을 갖고 있습니다.
+보통 anomaly detection이라하면 이 문제에 대해서 이야기 하는 것 입니다. [6]
+널리 사용되는 만큼 이외에도 outlier detection, novelty detection [5] 과 같은 다양한 이름을 갖고 있습니다.
 
 이 문제는 아래와 같은 방법을 통해 학습과 평가가 진행됩니다.
 먼저 모델을 학습할 때에는 정상 데이터만을 갖고 학습합니다.
@@ -141,7 +141,7 @@ OOD(Out-of-distribution) 문제는 이러한 문제를 해결하고자 합니다
 먼저 우리는 정상의 패턴이 하나이고, 비정상 패턴이 다양한 형태를 상상해 볼 수 있습니다.
 예를 들어 MNIST의 경우에 임의의 숫자 클래스 하나를 정상 데이터로 가정하고 학습을 진행합니다.
 이후에 테스트 과정에서 10가지 클래스 모두를 포함하여 모델이 정상 클래스와 비정상 클래스를 잘 구별하는지 테스트할 수 있을 것입니다.
-이 케이스는 one-class classification 이라는 이름으로도 널리 알려져 있습니다.
+이 케이스는 one-class classification [7] 이라는 이름으로도 널리 알려져 있습니다.
 
 #### Multimodal normality case
 
@@ -158,11 +158,11 @@ OOD(Out-of-distribution) 문제는 이러한 문제를 해결하고자 합니다
 
 우리 마키나락스는 주로 이 방법에 대해서 연구를 수행하며, novelty detection이라는 이름으로 부르고 있습니다.
 그 이름에서 볼 수 있듯이, 데이터의 참신성(novelty)을 탐지하기 위한 방법임을 알 수 있습니다.
-좀 더 자세한 셋업은 ICLR 2020에 출판된 마키나락스의 페이퍼 [RaPP](http://bit.ly/rapp_openreview)를 참고하세요.
+좀 더 자세한 셋업은 ICLR 2020에 출판된 마키나락스의 페이퍼 [RaPP](http://bit.ly/rapp_openreview)[5] 를 참고하세요.
 
 ### Unsupervised Anomaly Detection
 
-그럼 우리는 수집된 데이터들이 정상 또는 비정상 레이블링이 전혀 없는 경우에 대해서도 생각해 볼 수 있을 것입니다.
+그럼 우리는 수집된 데이터들이 정상 또는 비정상 레이블링이 전혀 없는 경우에 대해서도 생각해 볼 수 있을 것입니다. [8]
 수집된 데이터를 일괄적으로 학습용과 평가용으로 나눈 후에 모델 학습과 평가를 진행할 수 있겠지요.
 이와 같은 방법을 unsupervised anomaly detection이라고 부릅니다.
 이 경우에도 마찬가지로 unimodal normality case와 multimodal normality case로 나눠볼 수 있을 것입니다.
@@ -214,31 +214,31 @@ Kernel-SVM과 같이 기존의 커널 기반 머신러닝 알고리즘에 Deep N
 하지만 MNIST에 대한 복원 결과를 보면 알 수 있듯이, 보통은 blur 하게 복원되는 특징이 있습니다.
 이는 MSE 손실 함수를 사용했기 때문이라고 볼 수 있습니다.
 MSE 손실 함수는 불확실한 부분에 대해서는 평균값으로 예측하도록 동작하기 때문입니다.
+추가로 우리는 단순한 오토인코더 뿐만 아니라 다양한 오토인코더(e.g. VAE, AAE) 등을 활용하여 anomaly detection을 구할 수 있습니다. — 데이터셋에 따라 VAE와 AAE가 더 뛰어난 성능을 보이기도 합니다. [2, 5, 6]
 
 따라서 PCA와 같이 복원된 샘플에 대해서 원본 샘플과의 차이를 비교하는 방식인 reconstruction error based anomaly detection 에서는 성능이 떨어질 우려가 있습니다.
 
 ### Generative Adversarial Network based Anomaly Detections
 
 복원 오차에 기반한 anomaly detection 방식에서 MSE 손실함수의 사용으로 인한 복원 성능 하락은 anomaly detection 성능에 영향을 끼칠 수 있습니다.
-따라서 오토인코더 기반 방식의 단점을 보완하기 위해 제안된 방법은 GAN을 활용하여 anomaly detection을 수행하는 것입니다.
+따라서 오토인코더 기반 방식의 단점을 보완하기 위해 제안된 방법은 GAN을 활용하여 anomaly detection을 수행하는 것입니다. [9, 10, 11]
 하지만 GAN의 경우에는 generator와 discriminator 사이의 적대적 학습을 통해 모델이 학습되기 때문에, 오토인코더와 달리 직접적으로 차원 축소를 수행하는 모듈이 존재하지 않습니다.
 이는 GAN이 사실은 주로 생성 자체를 위한 모델이고, 차원 축소를 위한 모델은 아니기 때문입니다.
 하지만 anomaly detection은 테스트 과정에서 샘플이 주어지면 이를 차원 축소 이후에 복원하는 과정을 거쳐야 하기 때문에, 차원 축소를 위한 모듈이 필요합니다.
 
 따라서 기존의 GAN 기반의 anomaly detection 방법들은 이를 해결하기 위한 여러가지 방법들을 제시하였습니다.
-예를 들어 AnoGAN의 경우에는 이를 해결하기 위해서 generator로부터 생성된 $\hat{x}$ 과 $x$ 와의 차이를 최소화하는 latent variable $z$ 를 찾도록 back-propagation을 수행하는 방법을 수행합니다. — 추후 GAN에 대한 anomaly detection 포스트를 다루도록 하겠습니다.
+예를 들어 AnoGAN [9]의 경우에는 이를 해결하기 위해서 generator로부터 생성된 $\hat{x}$ 과 $x$ 와의 차이를 최소화하는 latent variable $z$ 를 찾도록 back-propagation을 수행하는 방법을 수행합니다. — 추후 GAN에 대한 anomaly detection 포스트를 다루도록 하겠습니다.
 
 아쉽게도 MSE의 단점을 보완하고자 제안된 GAN의 경우에는 CNN에서만 동작할뿐더러, generator와 discriminator의 균형있는 학습도 굉장히 큰 장애물로 작용합니다.
 또한 reconstruction error가 낮다고 무조건 모델의 성능이 좋은 것도 아님을 실험적으로 알 수 있었으므로, 마키나락스는 주로 오토인코더에 기반한 anomaly detection을 수행합니다.
 
 ### Self-supervised Learning based Anomaly Detections
 
-가장 최근에 [제안](https://arxiv.org/abs/1805.10917)된 방법입니다.
-학계에서 주목받고 있는 self-supervised learning 기법을 활용하여 anomaly detection에 적용하였습니다.
+가장 최근에 제안된 방법으로, 학계에서 주목받고 있는 self-supervised learning 기법을 활용하여 anomaly detection에 적용하였습니다.
 물론 오토인코더도 주어진 입력을 똑같이 복원하도록 학습한다는 점에서, self-supervised learning에 속할 수 있습니다.
 하지만 여기서 소개하고자 하는 방법들은 좀 더 다양한 objective를 수행하도록 학습시킨다는 점에서 다릅니다.
 
-예를 들어 2018년 NIPS에서 제안된 논문인 [Deep Anomaly Detection Using Geometric Transformations](https://arxiv.org/abs/1805.10917) 에서는 주어진 이미지에 대해서 미리 정의한 변형(transformation)을 준 이후에, 네트워크가 변형의 종류를 맞추도록 학습시킵니다.
+예를 들어 2018년 NIPS에서 제안된 논문인 [Deep Anomaly Detection Using Geometric Transformations](https://arxiv.org/abs/1805.10917) [12] 에서는 주어진 이미지에 대해서 미리 정의한 변형(transformation)을 준 이후에, 네트워크가 변형의 종류를 맞추도록 학습시킵니다.
 그럼 테스트 과정에서 비정상 샘플에 변형이 추가되었을 때, 네트워크는 어떤 변형이 추가되었는지 잘 맞추지 못할 것입니다.
 이 논문은 비록 변형 방법이 이미지에 국한되지만, 새로운 방법을 제시한 논문으로 주목 받았습니다.
 
@@ -262,4 +262,3 @@ using Reconstruction Probability, SNU Data Mining Center, 2015
 - [10] Houssam Zenati et al., Efficient GAN-Based Anomaly Detection, Arxiv, 2018
 - [11] Ilyass Haloui et al., Anomaly detection with Wasserstein GAN, 2018
 - [12] Izhak Golan et al., Deep Anomaly Detection Using Geometric Transformations, NeurIPS, 2018
-- [13] Liron Bergman et al., Classification-Based Anomaly Detection for General Data, ICLR, 2020
