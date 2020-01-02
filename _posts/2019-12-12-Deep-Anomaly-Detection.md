@@ -74,8 +74,8 @@ PCA는 데이터의 분포에 따라 그 분산을 가장 최대로 하는 축�
 
 $$
 \begin{gathered}
-f:x\rightarrow\mathbb{R}^{m}\text{, where }x\in\mathbb{R}^{n}, \\
-g:\mathbb{R}^{m}\rightarrow\mathbb{R}^{n}\text{ and }\hat{x}=g\circ{f}(x)\text{, where }m<n. \\
+f:x\rightarrow\mathbb{R}^{n}\text{, where }x\in\mathbb{R}^{m}, \\
+g:\mathbb{R}^{n}\rightarrow\mathbb{R}^{m}\text{ and }\hat{x}=g\circ{f}(x)\text{, where }m>n. \\
 \\
 \text{anomaly\_score}(x)=||x-\hat{x}||, \\
 \text{is\_anomalous}(x)=\begin{cases}
