@@ -85,13 +85,21 @@ $$
 
 ![예제](no_image)
 
+하지만 아쉽게도 이 모델은 auto-regressive(자기회귀) 특성을 가지므로 한계가 있습니다. 한 방향으로만 추론이 이루어지기 때문에, $x_t$ 에 대해서 추론을 수행하고자 할 때, $t$ 이전 시점의 데이터들로부터만 정보를 얻어올 수 있습니다. 하지만 $t$ 이후 시점으로부터도 정보를 얻어와 $x_t$ 를 추론할 수 있다면 훨씬 더 정확한 예측( $\log{P(x_t|x_{<t},x_{t+1},\cdots,x_T)}$ )을 수행할 수 있을 것입니다.
+
+이것은 이상탐지 문제는 generation task가 아니기 때문이라고 해석해 볼 수 있습니다. 예를 들어 기계 번역(machine translation)과 같은 언어 모델링(language modeling) task에서는 신경망이 새로운 문장을 출력해 내야 하는 것이지만, 이상탐지 task에서는 주어진 샘플을 얼마나 잘 똑같이 복원해 내는지가 관건이기 때문이라고 볼 수 있습니다.
+
 ### Encoder-Decoder based Methods
+
+그럼 한 발 더 나아가 sequence to sequence와 같은 encoder + decoder 기반의 아키텍처를 생각해볼 수 있습니다.
+
+![아키텍처 예제](no_image)
+
+다만, 이 아키텍처는 주어진 입력을 그대로 복원해내야 하기 때문에, 기존의 sequence to sequence와 차별하기 위해서 sequence autoencoder(SeqAE)라고 부르도록 하겠습니다. 이 SeqAE는 여전히 auto-regressive한 decoder를 갖고 있지만, 어쨌든 encoder에서 주어진 모든 time-step을 볼 수 있었기 때문에, 앞서 설명한 아키텍처보다는 조금 더 유리한 부분을 가질 수 있습니다.
 
 #### Attention?
 
 #### Teacher Forcing
-
-#### Posterior Collapse
 
 #### Likelihood: Reconstruction Error
 
@@ -102,6 +110,10 @@ $$
 ###### Minimum Risk Training (MRT) in Machine Translations
 
 ##### In Anomaly Detection Case
+
+#### Needs of SeqVAE
+
+##### Posterior Collapse
 
 ## Conclusion
 
