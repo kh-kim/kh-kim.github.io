@@ -87,7 +87,9 @@ $$
 
 하지만 아쉽게도 이 모델은 auto-regressive(자기회귀) 특성을 가지므로 한계가 있습니다. 한 방향으로만 추론이 이루어지기 때문에, $x_t$ 에 대해서 추론을 수행하고자 할 때, $t$ 이전 시점의 데이터들로부터만 정보를 얻어올 수 있습니다. 하지만 $t$ 이후 시점으로부터도 정보를 얻어와 $x_t$ 를 추론할 수 있다면 훨씬 더 정확한 예측을 수행할 수 있을 것입니다.
 
+<!--
 이것은 이상탐지 문제는 generation task가 아니기 때문이라고 해석해 볼 수 있습니다. 예를 들어 기계 번역(machine translation)과 같은 언어 모델링(language modeling) task에서는 신경망이 새로운 문장을 출력해 내야 하는 것이지만, 이상탐지 task에서는 주어진 샘플을 얼마나 잘 똑같이 복원해 내는지가 관건이기 때문이라고 볼 수 있습니다.
+-->
 
 ### Encoder-Decoder based Methods
 
@@ -111,21 +113,34 @@ $$
 
 #### Teacher Forcing
 
-사실 앞서 RNN을 통해 이상탐지를 수행하는 방법에 대해서 설명할 때, 빼 놓은 부분이 있습니다. 바로 학습 및 추론 방법 입니다. 딥러닝에서 시퀀셜 데이터를 학습할 때에는 teacher forcing이라는 방법을 통해 학습을 수행하는 것이 보통입니다.
+사실 앞서 RNN을 통해 이상탐지를 수행하는 방법에 대해서 설명할 때, 빼 놓은 부분이 있습니다. 바로 학습 및 추론 방법 입니다. 먼저, 추론 상황을 가정해보겠습니다. 자연어생성(NLG)과 같은 Auto-regressive한 task를 수행하는 경우, 보통은 decoder를 통해 출력을 뱉어낼 때 decoder의 입력은 이전 time-step의 decoder의 출력이 됩니다.
 
-#### Likelihood: Reconstruction Error
+![예제](no_image)
 
-#### Generations
+$$
+\hat{x}_t=\text{argmax}\log{P(\text{x}_t|\hat{x}_{<t};\theta)}
+$$
 
-##### Other Fields: Natural Language Generations
+하지만 문제는 학습을 수행할 때는 이와 같은 방법으로 진행하는 것은 문제가 될 수 있습니다. 우리는 likelihood를 maximize 하기 때문에, 원래의 정답 $x_t$ 와 디코더 $f$ 의 출력 $\hat{x}_t$ 의 차이를 구합니다. 이것은 수식으로 나타내면 아래와 같습니다.
 
-###### Minimum Risk Training (MRT) in Machine Translations
+$$\begin{aligned}
+\mathcal{L}(\theta)&=-\sum_{t=1}^T{\log{P(x_t|x_{<t};\theta)}} \\
+&=-\|x_1-f_\theta(x_0)\|_2^2-\|x_2-f_\theta(x_{0:1})\|_2^2-\cdots-\|x_T-f_\theta(x_{0:T-1})\|_2^2
+\end{aligned}$$
 
-##### In Anomaly Detection Case
+즉, 디코더의 입력으로 $\hat{x}_{<t}$ 가 아닌, $x_{<t}$ 가 주어졌기 때문에, 가능한 것입니다. 만약 학습할 때에 $\hat{x}_{<t}$ 가 주어진 상태에서 디코더의 출력값과 $x_t$ 와의 MSE를 구한다면, 우리는 Maximum Likelihood Estimation (MLE)를 한다고 할 수 없는 것입니다. 따라서 딥러닝에서 MLE를 통해 시퀀셜 데이터를 학습할 때에는 teacher forcing이라는 방법을 통해 학습을 수행하는 것이 보통입니다.
+
+![Teacher Forcing 예제](no_image)
+
+Teacher forcing은 위 그림과 같이 학습 과정에서 decoder의 이전 time-step의 출력이 아닌 이전 time-step의 실제 정답을 decoder에 입력으로 넣어주는 것입니다. 우리는 이런 teacher forcing을 통해 auto-regressive task에서 RNN을 MLE를 통해 학습할 수 있게 됩니다.
+
+문제는 여기에서 발생하게 됩니다.
+
+#### How to Inference?
+
+#### Posterior Collapse
 
 #### Needs of SeqVAE
-
-##### Posterior Collapse
 
 ## Conclusion
 
