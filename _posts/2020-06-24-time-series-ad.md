@@ -66,7 +66,7 @@ $$\begin{gathered}
 그럼 이제 본격적으로 RNN 계열 모델들을 활용하는 방법을 이야기 해보겠습니다. 가장 간단한 방법으로는 하나의 RNN을 활용한 generative modeling을 생각해볼 수 있습니다. 이를 위해서는 아래와 같이 RNN $f$ 가 $x_{<t}$ 를 입력 받아, $x_t$ 를 예측하는 형태가 될 것입니다.
 
 $$
-\hat{\theta}=\text{argmax}\sum_{t=1}^{T}{\log{P(x_t|x_{<t};\theta)}}\text{, where }X=\{x_1,\cdots,x_T\}.
+\hat{\theta}=\text{argmax}\sum_{t=1}^{T}{\log{P(x_t|x_{<t};\theta)}}\text{, where }x_{1:T}=\{x_1,\cdots,x_T\}.
 $$
 
 그럼 이때 likelihood는 아래와 같이 계산될 수 있습니다.
@@ -78,7 +78,7 @@ $$
 이때 그럼 우리는 이 likelihood를 anomaly score로 삼아 이상탐지를 수행할 수 있을 것입니다. -- 기존 오토인코더 방식에서는 reconstruction error가 likelihood가 됩니다.
 
 $$
-\text{AnomalyScore}(X)=\sum_{t=1}^T{\|x_t-f_\theta(x_{<t})\|}
+\text{AnomalyScore}(x_{1:T})=\sum_{t=1}^T{\|x_t-f_\theta(x_{<t})\|}
 $$
 
 즉, RNN은 다음 time-step의 값을 예측하는 task를 통해 자연스럽게 정상 분포를 학습하게 되고, 비정상 샘플이 주어진다면 likelihood의 값이 낮게 나오게 될 것이므로 우리는 이를 활용하여 시계열 이상탐지를 수행할 수 있는 것입니다.
@@ -96,6 +96,10 @@ $$
 ![아키텍처 예제](no_image)
 
 다만, 이 아키텍처는 주어진 입력을 그대로 복원해내야 하기 때문에, 기존의 sequence to sequence와 차별하기 위해서 sequence autoencoder(SeqAE)라고 부르도록 하겠습니다. 이 SeqAE는 여전히 auto-regressive한 decoder를 갖고 있지만, 어쨌든 encoder에서 주어진 모든 time-step을 볼 수 있었기 때문에, 앞서 설명한 아키텍처보다는 조금 더 유리한 부분을 가질 수 있습니다.
+
+$$
+\hat{\theta}=\text{argmax}\sum_{t=1}^T{\log{P(x_t|x_{<t},z;\phi)}}\text{, where }z=g(x_{1:T};\psi)\text{ and }\theta=\{\phi,\psi\}.
+$$
 
 #### Attention?
 
