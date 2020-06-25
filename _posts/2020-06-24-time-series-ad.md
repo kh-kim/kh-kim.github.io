@@ -63,6 +63,8 @@ $$\begin{gathered}
 
 ### Single RNN based Methods
 
+그럼 이제 본격적으로 RNN 계열 모델들을 활용하는 방법을 이야기 해보겠습니다. 가장 간단한 방법으로는 하나의 RNN을 활용한 generative modeling을 생각해볼 수 있습니다. 이를 위해서는 아래와 같이 RNN이 $x_{<t}}$ 를 입력 받아, $x_t$ 를 예측하는 형태가 될 것입니다.
+
 ### Encoder-Decoder based Methods
 
 #### Attention?
