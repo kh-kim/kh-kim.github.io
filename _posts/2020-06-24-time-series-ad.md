@@ -101,9 +101,17 @@ $$
 \hat{\theta}=\text{argmax}\sum_{t=1}^T{\log{P(x_t|x_{<t},z;\phi)}}\text{, where }z=g(x_{1:T};\psi)\text{ and }\theta=\{\phi,\psi\}.
 $$
 
+이때 encoder $g$ 로부터 얻은 latent representation $z$ 는 오토인코더 관점에서 보면 bottleneck에서의 variable이라고 생각해 볼 수 있습니다. 즉, 우리는 encoder를 통해 $x_{1:T}$ 를 압축하여, decoder를 통해 순차적으로 풀어내는 것이라 볼 수 있습니다.
+
 #### Attention?
 
+이때 흔히 성능을 개선하기 위한 포인트로 attention을 추가하는 것을 고려해볼 수 있습니다. 예를 들어 기계번역을 위한 sequence to sequence(seq2seq) 아키텍처에서 attention이 추가 되면, seq2seq 내부 RNN의 hidden state의 capacity 부족 등의 문제로 인한 성능 하락을 막을 수 있습니다. 따라서 attention은 자연어처리 분야에서 매우 중대한 발전이라고 볼 수 있습니다.
+
+하지만 이상탐지 문제 해결 관점에서는 attention을 곧바로 적용하기에는 무리가 있습니다. 기계번역과 같은 task에서는 더 나은 문장을 생성하기 위해서 RNN의 hidden state를 극복하기 위한 대안으로 제시되었지만, 이상탐지에서는 bottleneck의 latent representation $z$ (hidden state)에 압축된 정보가 무엇인지가 중요합니다. 비정상 샘플이었다면 정상적으로 압축이 수행되지 않아, $z$ 에 복원을 위한 충분한 정보가 담겨있지 않을 것이기 때문입니다. 하지만 여기서 우리가 attention을 사용한다면, $z$ 의 압축 품질 여부와 상관 없이 decoder는 attention을 통해 encoder에서 충분한 정보를 access할 수 있을 것이기 때문입니다. 따라서 attention을 시도해 보는 것은 좋지만, 이 문제를 해결하는 방향이 함께 시도되어야 할 것이라 생각합니다.
+
 #### Teacher Forcing
+
+사실 앞서 RNN을 통해 이상탐지를 수행하는 방법에 대해서 설명할 때, 빼 놓은 부분이 있습니다. 바로 학습 및 추론 방법 입니다. 딥러닝에서 시퀀셜 데이터를 학습할 때에는 teacher forcing이라는 방법을 통해 학습을 수행하는 것이 보통입니다.
 
 #### Likelihood: Reconstruction Error
 
