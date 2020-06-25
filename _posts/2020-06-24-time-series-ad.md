@@ -31,13 +31,35 @@ category: blog
 
 해당 로봇팔은 6개의 축을 가지고 있습니다. 즉, 6개의 전기모터로 구성되어 있고, 이 모터에 들어가는 전류값(current)을 신호로 삼아서 이상탐지 문제를 접근해 볼 수 있을 것입니다. 이때, 각 축 별로 univariate time-series 이상탐지 모델을 만들어 적용해볼 수도 있을 것입니다. 하지만 이 경우에는 각 축간의 상호작용은 전혀 파악할 수 없을 것입니다. 예를 들어 1번 축이 높은 값일 때는 다른 축들이 낮은 값을 지녀야 한다던지와 같은 상황에 대해서는 대처할 수 없을 것입니다. 따라서 이러한 문제에서는 multivariate time-series 모델을 도입하여, 각 feature 사이의 상관관계까지도 학습할 수 있습니다.
 
+![6축 로봇팔 예제](no_image)
+
 이때, 기존의 shallow 기법들은 univariate 위에서의 time-series를 다루기에도 벅찬 상황이기 때문에, 딥러닝을 활용한 이상탐지 모델링 기법이 큰 힘을 발휘할 수 있습니다.
 
 ## Deep Time-series Anomaly Detection
 
 재미있게도 일찍이 딥러닝 이전의 시절에도 LSTM의 존재는 있었지만, 당시에는 데이터와 컴퓨팅 파워의 부족으로 인해서 부담스러운 존재였던 것도 사실입니다. 하지만 이제는 이전의 문제들이 대부분 해결되어 LSTM 따위는 아무런 부담없이 학습할 수 있게 되었습니다. 따라서 우리가 풀고자 하는 데이터가 시퀀셜 또는 시계열의 성격(샘플이 매번 독립적으로 같은 분포에서 샘플링 되는 것이 아니라면)을 갖고 있다면, RNN 계열의 모델을 활용해 보는 것도 매우 좋은 방법일 것 입니다.
 
-### Using Autoencoders with Flatten Features
+### Using IID Models with Flatten Vectors
+
+하지만 바로 RNN과 같은 시퀀셜 모델을 도입하기에 앞서, time-series 데이터를 1차원의 tensor로 flatten하여 일반적인 iid 모델에 넣어보는 것도 좋은 시도(or baseline)가 될 수 있습니다.
+
+![flatten 예제](no_image)
+
+6차원 time-series 로봇팔 데이터를 예로 들어 보겠습니다. 만약 해당 데이터가 10Hz의 샘플링 주기를 가지고 있고, 우리는 약 5초간의 동작 데이터를 활용하여 이상을 탐지하고자 한다면, 한번의 이상탐지를 위해 주어진 데이터는 아래와 같은 형태를 따를 것입니다.
+
+$$
+x\in\mathbb{R}^{6\times10\times5}\text{, where }x\sim{P_D(\text{x})}.
+$$
+
+이때, 이것을 flatten한다면 $6\times10\times5=300$ 차원의 벡터 $\tilde{x}$ 가 될 것입니다. 그럼 이 300차원의 벡터를 오토인코더(autoencoder) $\mathcal{A}$ 에 넣어 학습 및 추론을 수행할 수 있을 것입니다. 이때 우리는 예전 포스팅에서 다루었던 대로 복원 오차(reconstruction error) 또는 RaPP와 같은 방법들을 통해 이상 샘플을 탐지할 수 있습니다.
+
+$$\begin{gathered}
+\text{AnomalyScore}(x)=||\tilde{x}-\mathcal{A}(\tilde{x})|| \\
+\text{or} \\
+\text{RaPP}(x)=\sum_{i=0}^{\ell}{||g_{:i}(\tilde{x})-g_{:i}\circ\mathcal{A}(\tilde{x})||}\text{, where }\mathcal{A}=f_{:\ell}\circ{g_{:\ell}}.
+\end{gathered}$$
+
+하지만 이러한 경우(특히 fully-connected layer와 같은 레이어들로 구성되어 있는)에는, 시계열의 특성을 활용한다기보단 모든 feature들과의 상관관계를 모두 따져보는 것이기 떄문에, 필요 이상으로 배워야 하는 정보들이 많아지고 이에 따라 모델 웨이트 파라미터들도 훨씬 많아져서 모델이 학습하는데 불리하게 작용할 수 밖에 없습니다.
 
 ### Single RNN based Methods
 
