@@ -7,7 +7,7 @@ category: blog
 
 # Introduction to Deep Time-series Anomaly Detection
 
-이번 포스팅에서는 시계열(time-series) 또는 시퀀셜(sequntial) 데이터에 대한 anomaly detection 기법을 이야기하고자 합니다. 사실 시계열 데이터는 데이터의 발생 시점(e.g. interval)도 중요한 feature인데 반해, 단순한 시퀀셜 데이터는 보통 순서 정보만 활용됩니다. 하지만 딥러닝의 대부분의 모델들은 기본적으로 시퀀셜 데이터만 다루도록 설계되어 있습니다. 이 포스팅은 딥러닝을 활용한 일반적인 방법론에 대해 이야기하고자 하므로, 시계열 데이터의 샘플간 time interval이 동일하다고 가정하고 seasonality와 같은 issue는 배제하고 이야기하고자 합니다. 즉, 비록 시계열 데이터이긴 하지만 일반적인 시퀀셜 데이터와 같이 다루도록 하겠습니다. 추후 다른 포스팅에서 interval 또는 seasonality와 같은 issue에 대해서 다루도록 하겠습니다.
+이번 포스팅에서는 시계열(time-series) 또는 시퀀셜(sequntial) 데이터에 대한 anomaly detection 기법을 이야기하고자 합니다. 사실 시계열 데이터는 데이터의 발생 시점(e.g. interval)도 중요한 feature인데 반해, 단순한 시퀀셜 데이터는 보통 순서 정보만 활용됩니다. 하지만 딥러닝의 대부분의 모델들은 기본적으로 시퀀셜 데이터만 다루도록 설계되어 있습니다. 이 포스팅은 딥러닝을 활용한 일반적인 방법론에 대해 이야기하고자 하므로, 시계열 데이터의 샘플간 time interval이 동일하다고 가정하고 seasonality와 같은 issue는 배제하고 이야기하고자 합니다. 즉, 비록 시계열 데이터이긴 하지만 일반적인 시퀀셜 데이터와 같이 다루도록 하겠습니다. 추후 다른 포스팅에서 interval 또는 seasonality와 같은 issue에 대해서 다루도록 하겠습니다. -- 딥러닝을 활용한 이상탐지에 대한 앞선 포스팅[]도 참고 바랍니다.
 
 ## Previous Methods
 
@@ -87,9 +87,7 @@ $$
 
 하지만 아쉽게도 이 모델은 auto-regressive(자기회귀) 특성을 가지므로 한계가 있습니다. 한 방향으로만 추론이 이루어지기 때문에, $x_t$ 에 대해서 추론을 수행하고자 할 때, $t$ 이전 시점의 데이터들로부터만 정보를 얻어올 수 있습니다. 하지만 $t$ 이후 시점으로부터도 정보를 얻어와 $x_t$ 를 추론할 수 있다면 훨씬 더 정확한 예측을 수행할 수 있을 것입니다.
 
-<!--
-이것은 이상탐지 문제는 generation task가 아니기 때문이라고 해석해 볼 수 있습니다. 예를 들어 기계 번역(machine translation)과 같은 언어 모델링(language modeling) task에서는 신경망이 새로운 문장을 출력해 내야 하는 것이지만, 이상탐지 task에서는 주어진 샘플을 얼마나 잘 똑같이 복원해 내는지가 관건이기 때문이라고 볼 수 있습니다.
--->
+이것은 이상탐지 문제는 generation에 집중하는 task가 아니기 때문이라고 해석해 볼 수 있습니다. 예를 들어 기계 번역(machine translation)과 같은 언어 모델링(language modeling) task에서는 신경망이 입력과 다른 새로운 문장을 출력해 내야 하는 것이지만, 이상탐지 task에서는 주어진 샘플을 얼마나 잘 똑같이 복원해 내는지가 관건이기 때문이라고 볼 수 있습니다.
 
 ### Encoder-Decoder based Methods
 
@@ -121,14 +119,14 @@ $$
 \hat{x}_t=\text{argmax}\log{P(\text{x}_t|\hat{x}_{<t};\theta)}
 $$
 
-하지만 문제는 학습을 수행할 때는 이와 같은 방법으로 진행하는 것은 문제가 될 수 있습니다. 우리는 likelihood를 maximize 하기 때문에, 원래의 정답 $x_t$ 와 디코더 $f$ 의 출력 $\hat{x}_t$ 의 차이를 구합니다. 이것은 수식으로 나타내면 아래와 같습니다.
+하지만 문제는 학습을 수행할 때는 이와 같은 방법으로 진행하는 것은 문제가 될 수 있습니다. 우리는 likelihood를 maximize 하기 때문에, 원래의 정답 $x_t$ 와 decoder $f$ 의 출력 $\hat{x}_t$ 의 차이를 구합니다. 이것은 수식으로 나타내면 아래와 같습니다.
 
 $$\begin{aligned}
 \mathcal{L}(\theta)&=-\sum_{t=1}^T{\log{P(x_t|x_{<t};\theta)}} \\
 &=-\|x_1-f_\theta(x_0)\|_2^2-\|x_2-f_\theta(x_{0:1})\|_2^2-\cdots-\|x_T-f_\theta(x_{0:T-1})\|_2^2
 \end{aligned}$$
 
-즉, 디코더의 입력으로 $\hat{x}_{<t}$ 가 아닌, $x_{<t}$ 가 주어졌기 때문에, 가능한 것입니다. 만약 학습할 때에 $\hat{x}_{<t}$ 가 주어진 상태에서 디코더의 출력값과 $x_t$ 와의 MSE를 구한다면, 우리는 Maximum Likelihood Estimation (MLE)를 한다고 할 수 없는 것입니다. 따라서 딥러닝에서 MLE를 통해 시퀀셜 데이터를 학습할 때에는 teacher forcing이라는 방법을 통해 학습을 수행하는 것이 보통입니다.
+즉, decoder의 입력으로 $\hat{x}_{<t}$ 가 아닌, $x_{<t}$ 가 주어졌기 때문에, 가능한 것입니다. 만약 학습할 때에 $\hat{x}_{<t}$ 가 주어진 상태에서 decoder의 출력값과 $x_t$ 와의 MSE를 구한다면, 우리는 Maximum Likelihood Estimation (MLE)를 한다고 할 수 없는 것입니다. 따라서 딥러닝에서 MLE를 통해 시퀀셜 데이터를 학습할 때에는 teacher forcing이라는 방법을 통해 학습을 수행하는 것이 보통입니다.
 
 ![Teacher Forcing 예제](no_image)
 
@@ -136,13 +134,41 @@ Teacher forcing은 위 그림과 같이 학습 과정에서 decoder의 이전 ti
 
 문제는 여기에서 발생하게 됩니다.
 
-#### How to Inference?
+#### How to Inference: Likelihood vs Generation
 
-#### Posterior Collapse
+문제를 디테일하게 이야기하기에 앞서, SeqAE에서의 이상탐지를 위한 추론 방법에 대해서 좀 더 이야기하려 합니다. 앞서는 단순히 NLG task와 같은 추론 방법인 generation에 대해서 이야기 했는데, 사실 iid 데이터의 오토인코더를 활용한 reconstruction error 기반의 이상탐지 방법은 분포가 gaussian이라는 가정 하에 likelihood를 구하는 것이라고 볼 수 있습니다.
 
-#### Needs of SeqVAE
+따라서, SeqAE에서도 generation이 아닌, likelihood를 통해 reconstruction error를 구하고, 그것을 통해 이상탐지 추론을 수행해야 하는 것은 아닌가 하는 합리적인 의심이 생길 수 있습니다. 그럼 위에서 적은데로 teacher forcing 방법을 추론에서 수행할 수도 있다는 이야기겠죠. 특히, NLG와 달리 이상탐지 task에서는 입력을 그대로 복원해내기 때문에, SeqAE가 출력해야 하는 값을 알고 있다는 점에서 teacher forcing이 가능합니다. -- 이와 반대로 기계번역과 같은 NLG task에서는 test과정에서는 seq2seq의 출력값을 모르기 때문에 generation을 수행할 수 밖에 없습니다. 
+
+그런데 문제는 teacher forcing을 통해 reconstruction을 구하게 된다면 너무나도 쉬운 task가 되어버린다는 것입니다. 예를 들어 아래와 같이 MNIST를 시퀀셜 데이터로 취급해서 이상탐지를 똑같이 수행해볼 수 있을겁니다. 즉, $28\times28$ 의 MNIST 이미지를 28차원의 벡터가 28 time-step 존재하는 시퀀셜 데이터로 생각해볼 수 있을 것입니다.
+
+![예제](no_image)
+
+그럼 teacher forcing을 추론에서 수행하게 된다면, decoder는 이전 time-step에서 틀린 출력 $\hat{x}_{t-1}$ 을 뱉어냈더라도, 현재 time-step의 입력으로 정답 $x_{t-1}$ 을 받게 될겁니다. 그럼 현재 time-step의 출력 $\hat{x}_t$ 를 예측하는 것은 너무나도 쉬워지게 됩니다. 당장 MNIST의 경우에만 보더라도 $x_{t-1}$ 과 거의 유사한 픽셀값을 뱉어내면 거의 맞출테니까요. 즉, 학습 때 보지 못한 형태의 이미지가 들어오더라도 같은 방법을 통해서 대충 맞출 수 있게 되는 것입니다.
+
+그러므로 우리는 SeqAE와 같은 모델에서는 teacher forcing을 통해 likelihood를 구하는 것이 아닌, generation 방식으로 통해 이상탐지의 추론을 수행해야 함을 확인할 수 있습니다.
+
+#### Begining of Posterior Collapse
+
+그런데 문제는 또 남아있습니다. teacher forcing을 통해 학습을 진행할 때에도 마찬가지 상황이 발생한다는 것입니다. 특히나 NLG와 같은 discrete value를 출력하는 task가 아니라 continuous value를 뱉어내는 task이기 때문에, $x_{t-1}$ 와 $x_t$ 의 차이가 적어서 생기는 문제로도 생각해볼 수 있습니다. 따라서 teacher forcing을 통해 학습을 수행할 때에도, 너무나도 쉬운 나머지 encoder로부터 많은 정보를 받을 필요가 없어지게 됩니다. 예를 들어 아래와 같이 2 또는 3에 대해서 학습할 때, 한번의 도움만 있으면 충분하지 않을까요?
+
+![2 or 3](no_image)
+
+그럼 encoder는 주어진 샘플에 대해서 많은 정보를 인코딩하지 않도록 학습될겁니다. 이것은 결국 추론 단계에서 비정상 샘플이 주어졌을 때, 안좋은 영향을 끼치게 될 것입니다. 이렇게 encoder가 어떤 샘플이 주어지든 비슷한 latent representation으로 인코딩하게 되는 현상을 posterior collapse라고 부릅니다. 물론 위의 예제에서처럼 어쨌든 2와 3을 구분하기 위한 정보가 어느정도는 담겨있을 것이기 때문에, 아무런 정보가 없지는 않겠지만 posterior collapse의 경향이 나타난다고 볼 수 있습니다.
+
+#### Needs of Sequence Variational Autoencoder (SeqVAE)
+
+우리는 앞선 포스팅에서 VAE가 Variational Information Bottleneck(VIB)를 가지고 있어서 이상탐지 task에서 더 뛰어난 성능을 보인다고 이야기 한 바 있습니다. 그럼 마찬가지로 SeqAE에서도 한발 더 나아가 SeqVAE를 생각해 볼 수 있을 것입니다. 문제는 이 SeqVAE가 posterior collapse에 매우 취약하다는 것입니다.
+
+$$
+\mathcal{L}(\phi,\psi)=-\mathbb{E}_{z\sim{q(\text{z}|x;\psi)}}\Big[\log{p(x|z;\phi)}\Big]+\text{KL}\Big(q(z|x;\psi)\|p(z)\Big)
+$$
+
+위와 같이 VAE 또는 SeqVAE는 첫 번째 reconstruction term과 함께 두 번째 KL-divergence term도 최소화해야 합니다. 문제는 SeqVAE는 앞서 언급한 문제 때문에 디코더는 아주 적은 정보만 있어도 디코딩을 잘 할 수 있습니다. 더욱이 KLD term이 있기 때문에 인코더는 더더욱 아무 일을 하지 않으려 노력하게 됩니다. -- 아마 인코더는 어떤 샘플이 들어오더라도 $\mu=0$ , $\sigma=1$ 을 뱉어내고 싶을 겁니다. 즉, SeqVAE는 앞서 언급한 posterior collapse 문제를 더욱 심하게 겪게 됩니다.
 
 ## Conclusion
+
+이번 포스팅에서는 딥러닝 모델을 활용한 시계열(또는 시퀀셜) 데이터에 대한 이상탐지 방법과 어떤 어려움들이 있는지 살펴보았습니다. 다음 포스팅에서는 앞서 언급한 문제들을 해결한 사례를 공유하고자 합니다.
 
 ## References
 
@@ -153,3 +179,6 @@ Teacher forcing은 위 그림과 같이 학습 과정에서 decoder의 이전 ti
 - [5] [InfoVAE: Balancing Learning and Inference in Variational Autoencoders](https://arxiv.org/pdf/1706.02262.pdf)
 - [6] [LAGGING INFERENCE NETWORKS AND POSTERIOR COLLAPSE IN VARIATIONAL AUTOENCODERS](https://openreview.net/pdf?id=rylDfnCqF7)
 - [7] [Variational Attention for Sequence-to-Sequence Models](https://arxiv.org/pdf/1712.08207.pdf)
+- [8] [RaPP - Novelty Detection with Reconstruction along Projection Pathway](https://kh-kim.github.io/blog/2020/02/18/rapp.html)
+- [9] [Autoencoder based Anomaly Detection](https://kh-kim.github.io/blog/2019/12/15/Autoencoder-based-anomaly-detection.html)
+- [10] [Introduction to Deep Anomaly Detection](https://kh-kim.github.io/blog/2019/12/12/Deep-Anomaly-Detection.html)
