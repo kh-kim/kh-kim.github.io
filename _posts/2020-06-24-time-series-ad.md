@@ -166,6 +166,10 @@ $$
 
 위와 같이 VAE 또는 SeqVAE는 첫 번째 reconstruction term과 함께 두 번째 KL-divergence term도 최소화해야 합니다. 문제는 SeqVAE는 앞서 언급한 문제 때문에 디코더는 아주 적은 정보만 있어도 디코딩을 잘 할 수 있습니다. 더욱이 KLD term이 있기 때문에 인코더는 더더욱 아무 일을 하지 않으려 노력하게 됩니다. -- 아마 인코더는 어떤 샘플이 들어오더라도 $\mu=0$ , $\sigma=1$ 을 뱉어내고 싶을 겁니다. 즉, SeqVAE는 앞서 언급한 posterior collapse 문제를 더욱 심하게 겪게 됩니다.
 
+그럼 이런 posterior collapse가 심하게 존재하고 있는 상황에서는 인코더에 어떤 샘플이 주어지더라도 인코더의 출력값 latent representation $z$ 는 변화가 없을(KLD term이 0이 될) 것이기 때문에, 디코더는 generation형식으로 inference를 수행하게 되면 어떤 샘플이 들어오든 항상 같은 출력값을 뱉어내게 됩니다. 마치 Generative Adversarial Networks (GAN)에서의 mode collapse와 비슷한 현상이 결과로 나타나는 것이지요. -- 이러한 현상이 나타나는 원인은 다릅니다.
+
+따라서 이러한 VAE의 posterior collapse를 해결하기 위한 연구들도 많이 이루어져 왔습니다. 하지만 대부분은 text domain에서의 문제 셋팅(discrete value + variable length)에 집중하고 있고, continuous data에 대한 이상탐지 문제에서의 posterior collapse 현상에 대한 해결책을 제시하는 연구는 아직 많지 않은 것이 사실입니다. 다행히도 기존의 연구들이 집중하고 있는 문제 셋팅이 이상탐지에 비해서 좀 더 어려운 문제 셋팅이다보니, 기존의 연구들로부터 많은 도움은 받을 수 있겠지만 본격적인 연구가 이루어지지 않았다는 것이죠. 따라서 sequential modeling을 활용한 이상탐지 문제 해결을 위한 연구들이 본격적으로 많이 이루어져야 함을 알 수 있습니다.
+
 ## Conclusion
 
 이번 포스팅에서는 딥러닝 모델을 활용한 시계열(또는 시퀀셜) 데이터에 대한 이상탐지 방법과 어떤 어려움들이 있는지 살펴보았습니다. 사실 단순히 RNN이나 seq2seq와 같은 아키텍처를 쓰면 모든 문제가 해결될 것 같지만, 이 포스팅에서 살펴본 것처럼 고려해야 할 점들이 많이 남아 있고, 아직 풀어야 할 문제들도 남아있는 것이 사실입니다. 다음 포스팅에서는 앞서 언급한 문제들을 마키나락스에서 해결한 사례를 공유하고자 합니다.
