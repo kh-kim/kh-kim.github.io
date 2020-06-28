@@ -168,7 +168,7 @@ $$
 
 ## Conclusion
 
-이번 포스팅에서는 딥러닝 모델을 활용한 시계열(또는 시퀀셜) 데이터에 대한 이상탐지 방법과 어떤 어려움들이 있는지 살펴보았습니다. 다음 포스팅에서는 앞서 언급한 문제들을 해결한 사례를 공유하고자 합니다.
+이번 포스팅에서는 딥러닝 모델을 활용한 시계열(또는 시퀀셜) 데이터에 대한 이상탐지 방법과 어떤 어려움들이 있는지 살펴보았습니다. 사실 단순히 RNN이나 seq2seq와 같은 아키텍처를 쓰면 모든 문제가 해결될 것 같지만, 이 포스팅에서 살펴본 것처럼 고려해야 할 점들이 많이 남아 있고, 아직 풀어야 할 문제들도 남아있는 것이 사실입니다. 다음 포스팅에서는 앞서 언급한 문제들을 마키나락스에서 해결한 사례를 공유하고자 합니다.
 
 ## References
 
@@ -188,6 +188,8 @@ $$
 - [9] [Malhotra et al., LSTM-based Encoder-Decoder for Multi-sensor Anomaly Detection, ICML Workshop, 2016](https://arxiv.org/pdf/1607.00148.pdf)
 - [11] [pavithrasv, Timeseries anomaly detection using an Autoencoder, Keras Tutorial, 2020](https://keras.io/examples/timeseries/timeseries_anomaly_detection/)
 - [12] [Park, Jinman, RNN based Time-series Anomaly Detector Model Implemented in Pytorch, GitHub, 2018](https://github.com/chickenbestlover/RNN-Time-series-Anomaly-Detection)
+
+
 <!--
 - [10] [Zhang et al., VELC: A New Variational AutoEncoder Based Model for Time Series Anomaly Detection, ArXiv, 2019](https://arxiv.org/pdf/1907.01702.pdf)
 - [13] [Park et al., A Multimodal Anomaly Detector for Robot-Assisted Feeding Using an LSTM-based Variational Autoencoder, IEEE Robotics and Automation Letters, 2018](https://arxiv.org/pdf/1711.00614.pdf)
