@@ -7,7 +7,7 @@ category: blog
 
 # Introduction to Deep Time-series Anomaly Detection
 
-이번 포스팅에서는 시계열(time-series) 또는 시퀀셜(sequntial) 데이터에 대한 anomaly detection 기법을 이야기하고자 합니다. 사실 시계열 데이터는 데이터의 발생 시점(e.g. interval)도 중요한 feature인데 반해, 단순한 시퀀셜 데이터는 보통 순서 정보만 활용됩니다. 하지만 딥러닝의 대부분의 모델들은 기본적으로 시퀀셜 데이터만 다루도록 설계되어 있습니다. 이 포스팅은 딥러닝을 활용한 일반적인 방법론에 대해 이야기하고자 하므로, 시계열 데이터의 샘플간 time interval이 동일하다고 가정하고 seasonality와 같은 issue는 배제하고 이야기하고자 합니다. 즉, 비록 시계열 데이터이긴 하지만 일반적인 시퀀셜 데이터와 같이 다루도록 하겠습니다. 추후 다른 포스팅에서 interval 또는 seasonality와 같은 issue에 대해서 다루도록 하겠습니다. -- 딥러닝을 활용한 이상탐지에 대한 앞선 포스팅[]도 참고 바랍니다.
+이번 포스팅에서는 시계열(time-series) 또는 시퀀셜(sequntial) 데이터에 대한 anomaly detection 기법을 이야기하고자 합니다. 사실 시계열 데이터는 데이터의 발생 시점(e.g. interval)도 중요한 feature인데 반해, 단순한 시퀀셜 데이터는 보통 순서 정보만 활용됩니다. 하지만 딥러닝의 대부분의 모델들은 기본적으로 시퀀셜 데이터만 다루도록 설계되어 있습니다. 이 포스팅은 딥러닝을 활용한 일반적인 방법론에 대해 이야기하고자 하므로, 시계열 데이터의 샘플간 time interval이 동일하다고 가정하고 seasonality와 같은 issue는 배제하고 이야기하고자 합니다. 즉, 비록 시계열 데이터이긴 하지만 일반적인 시퀀셜 데이터와 같이 다루도록 하겠습니다. 추후 다른 포스팅에서 interval 또는 seasonality와 같은 issue에 대해서 다루도록 하겠습니다. -- 딥러닝을 활용한 이상탐지에 대한 앞선 포스팅[1, 2, 3]도 참고 바랍니다.
 
 ## Previous Methods
 
@@ -27,7 +27,7 @@ category: blog
 
 사실 오늘 주로 다루고자 하는 주제는 multivariate time-series 데이터에 대한 이상탐지입니다. 예를 들어, 위의 그림은 univariate time-series 데이터인 오디오 신호를 [MFCC](https://en.wikipedia.org/wiki/Mel-frequency_cepstrum)로 나타낸 것입니다. 위의 그림에서 x축은 시간을 나타내고, y축은 주파수 대역을 의미합니다. 따라서 특정 시간에 발생한 전체 주파수 대역에서의 신호의 세기가 multivariate vector로 나타내어질 수 있을 것입니다. 그럼 정해진 시간동안의 multivariate vector들의 시퀀스가 주어졌을 때, 해당 벡터들의 시퀀스가 정상 범위 내에 있는지 판단하는 문제가 될 것입니다.
 
-사실 univariate time-series anomaly detection은 심장박동 이상탐지와 같은 문제에서는 훌륭하게 동작할 수 있지만, 많은 문제에 그대로 적용되기에는 어려움이 있습니다. 위의 오디오 신호에 대한 예제를 포함하여, 많은 반례를 생각해볼 수 있습니다. 예를 들어 제가 [DEVIEW 2019에서 발표](https://deview.kr/2019/schedule/286)할 때 데모로 소개해드렸던 로봇팔 이상탐지의 경우도 해당 될 수 있습니다.
+사실 univariate time-series anomaly detection은 심장박동 이상탐지와 같은 문제에서는 훌륭하게 동작할 수 있지만, 많은 문제에 그대로 적용되기에는 어려움이 있습니다. 위의 오디오 신호에 대한 예제를 포함하여, 많은 반례를 생각해볼 수 있습니다. 예를 들어 제가 [DEVIEW 2019에서 발표](https://deview.kr/2019/schedule/286)[4]할 때 데모로 소개해드렸던 로봇팔 이상탐지의 경우도 해당 될 수 있습니다.
 
 해당 로봇팔은 6개의 축을 가지고 있습니다. 즉, 6개의 전기모터로 구성되어 있고, 이 모터에 들어가는 전류값(current)을 신호로 삼아서 이상탐지 문제를 접근해 볼 수 있을 것입니다. 이때, 각 축 별로 univariate time-series 이상탐지 모델을 만들어 적용해볼 수도 있을 것입니다. 하지만 이 경우에는 각 축간의 상호작용은 전혀 파악할 수 없을 것입니다. 예를 들어 1번 축이 높은 값일 때는 다른 축들이 낮은 값을 지녀야 한다던지와 같은 상황에 대해서는 대처할 수 없을 것입니다. 따라서 이러한 문제에서는 multivariate time-series 모델을 도입하여, 각 feature 사이의 상관관계까지도 학습할 수 있습니다.
 
@@ -51,7 +51,7 @@ $$
 x\in\mathbb{R}^{6\times10\times5}\text{, where }x\sim{P_D(\text{x})}.
 $$
 
-이때, 이것을 flatten한다면 $6\times10\times5=300$ 차원의 벡터 $\tilde{x}$ 가 될 것입니다. 그럼 이 300차원의 벡터를 오토인코더(autoencoder) $\mathcal{A}$ 에 넣어 학습 및 추론을 수행할 수 있을 것입니다. 이때 우리는 예전 포스팅에서 다루었던 대로 복원 오차(reconstruction error) 또는 RaPP와 같은 방법들을 통해 이상 샘플을 탐지할 수 있습니다.
+이때, 이것을 flatten한다면 $6\times10\times5=300$ 차원의 벡터 $\tilde{x}$ 가 될 것입니다. 그럼 이 300차원의 벡터를 오토인코더(autoencoder) $\mathcal{A}$ 에 넣어 학습 및 추론을 수행할 수 있을 것입니다. 이때 우리는 예전 포스팅에서 다루었던 대로 복원 오차(reconstruction error) 또는 RaPP[5]와 같은 방법들을 통해 이상 샘플을 탐지할 수 있습니다.
 
 $$\begin{gathered}
 \text{AnomalyScore}(x)=||\tilde{x}-\mathcal{A}(\tilde{x})|| \\
@@ -87,7 +87,7 @@ $$
 
 하지만 아쉽게도 이 모델은 auto-regressive(자기회귀) 특성을 가지므로 한계가 있습니다. 한 방향으로만 추론이 이루어지기 때문에, $x_t$ 에 대해서 추론을 수행하고자 할 때, $t$ 이전 시점의 데이터들로부터만 정보를 얻어올 수 있습니다. 하지만 $t$ 이후 시점으로부터도 정보를 얻어와 $x_t$ 를 추론할 수 있다면 훨씬 더 정확한 예측을 수행할 수 있을 것입니다.
 
-이것은 이상탐지 문제는 generation에 집중하는 task가 아니기 때문이라고 해석해 볼 수 있습니다. 예를 들어 기계 번역(machine translation)과 같은 언어 모델링(language modeling) task에서는 신경망이 입력과 다른 새로운 문장을 출력해 내야 하는 것이지만, 이상탐지 task에서는 주어진 샘플을 얼마나 잘 똑같이 복원해 내는지가 관건이기 때문이라고 볼 수 있습니다.
+이것은 이상탐지 문제는 generation에 집중하는 task가 아니기 때문이라고 해석해 볼 수 있습니다. 예를 들어 기계 번역(machine translation)과 같은 언어 모델링(language modeling) task에서는 신경망이 입력과 다른 새로운 문장을 출력해 내야 하는 것이지만, 이상탐지 task에서는 주어진 샘플을 얼마나 잘 똑같이 복원해 내는지가 관건이기 때문이라고 볼 수 있습니다. 즉, 다시말하면 기존의 NLG task에서는 입력과 출력이 다른 형태이지만, 이상탐지 task에서는 입출력이 같은 형태이기 때문에 다른 접근법이 가능하다는 것입니다.
 
 ### Encoder-Decoder based Methods
 
@@ -146,7 +146,7 @@ Teacher forcing은 위 그림과 같이 학습 과정에서 decoder의 이전 ti
 
 그럼 teacher forcing을 추론에서 수행하게 된다면, decoder는 이전 time-step에서 틀린 출력 $\hat{x}_{t-1}$ 을 뱉어냈더라도, 현재 time-step의 입력으로 정답 $x_{t-1}$ 을 받게 될겁니다. 그럼 현재 time-step의 출력 $\hat{x}_t$ 를 예측하는 것은 너무나도 쉬워지게 됩니다. 당장 MNIST의 경우에만 보더라도 $x_{t-1}$ 과 거의 유사한 픽셀값을 뱉어내면 거의 맞출테니까요. 즉, 학습 때 보지 못한 형태의 이미지가 들어오더라도 같은 방법을 통해서 대충 맞출 수 있게 되는 것입니다.
 
-그러므로 우리는 SeqAE와 같은 모델에서는 teacher forcing을 통해 likelihood를 구하는 것이 아닌, generation 방식으로 통해 이상탐지의 추론을 수행해야 함을 확인할 수 있습니다.
+그러므로 우리는 SeqAE와 같은 모델에서는 teacher forcing을 통해 likelihood를 구하는 것이 아닌, generation 방식으로 통해 이상탐지의 추론을 수행해야 함을 확인할 수 있습니다. 즉, 원래 평소(NLG task등에서 하던 방법)에 하던대로 하면 됩니다.
 
 #### Begining of Posterior Collapse
 
@@ -172,6 +172,11 @@ $$
 
 ## References
 
+- [1] [Ki Hyun Kim, RaPP - Novelty Detection with Reconstruction along Projection Pathway, blog, 2020](https://kh-kim.github.io/blog/2020/02/18/rapp.html)
+- [2] [Ki Hyun Kim, Autoencoder based Anomaly Detection, blog, 2020](https://kh-kim.github.io/blog/2019/12/15/Autoencoder-based-anomaly-detection.html)
+- [3] [Ki Hyun Kim, Introduction to Deep Anomaly Detection, blog, 2020](https://kh-kim.github.io/blog/2019/12/12/Deep-Anomaly-Detection.html)
+- [4] [Ki Hyun Kim, Operational AI: Building a Lifelong Learning Anomaly Detection System, DEVIEW, 2019](https://deview.kr/2019/schedule/286)
+- [5] Ki Hyun Kim et al., Rapp: Novelty Detection with Reconstruction along Projection Pathway, ICLR, 2020
 - [1] [Inference Suboptimality in Variational Autoencoders](https://arxiv.org/pdf/1801.03558.pdf)
 - [2] [Semi-Amortized Variational Autoencoders](https://arxiv.org/pdf/1802.02550.pdf)
 - [3] [VARIATIONAL AUTOENCODERS FOR TEXT MODELING WITHOUT WEAKENING THE DECODER](https://openreview.net/pdf?id=H1eZ6sRcFm)
@@ -179,6 +184,11 @@ $$
 - [5] [InfoVAE: Balancing Learning and Inference in Variational Autoencoders](https://arxiv.org/pdf/1706.02262.pdf)
 - [6] [LAGGING INFERENCE NETWORKS AND POSTERIOR COLLAPSE IN VARIATIONAL AUTOENCODERS](https://openreview.net/pdf?id=rylDfnCqF7)
 - [7] [Variational Attention for Sequence-to-Sequence Models](https://arxiv.org/pdf/1712.08207.pdf)
-- [8] [RaPP - Novelty Detection with Reconstruction along Projection Pathway](https://kh-kim.github.io/blog/2020/02/18/rapp.html)
-- [9] [Autoencoder based Anomaly Detection](https://kh-kim.github.io/blog/2019/12/15/Autoencoder-based-anomaly-detection.html)
-- [10] [Introduction to Deep Anomaly Detection](https://kh-kim.github.io/blog/2019/12/12/Deep-Anomaly-Detection.html)
+- [8] [Kieu et al., Outlier Detection for Time Series with Recurrent Autoencoder Ensembles, IJCAI, 2019](https://www.ijcai.org/Proceedings/2019/0378.pdf)
+- [9] [Malhotra et al., LSTM-based Encoder-Decoder for Multi-sensor Anomaly Detection, ICML Workshop, 2016](https://arxiv.org/pdf/1607.00148.pdf)
+- [11] [pavithrasv, Timeseries anomaly detection using an Autoencoder, Keras Tutorial, 2020](https://keras.io/examples/timeseries/timeseries_anomaly_detection/)
+- [12] [Park, Jinman, RNN based Time-series Anomaly Detector Model Implemented in Pytorch, GitHub, 2018](https://github.com/chickenbestlover/RNN-Time-series-Anomaly-Detection)
+<!--
+- [10] [Zhang et al., VELC: A New Variational AutoEncoder Based Model for Time Series Anomaly Detection, ArXiv, 2019](https://arxiv.org/pdf/1907.01702.pdf)
+- [13] [Park et al., A Multimodal Anomaly Detector for Robot-Assisted Feeding Using an LSTM-based Variational Autoencoder, IEEE Robotics and Automation Letters, 2018](https://arxiv.org/pdf/1711.00614.pdf)
+-->
