@@ -43,7 +43,7 @@ category: blog
 
 하지만 바로 RNN과 같은 시퀀셜 모델을 도입하기에 앞서, time-series 데이터를 1차원의 tensor로 flatten하여 일반적인 iid 모델에 넣어보는 것도 좋은 시도(or baseline)가 될 수 있습니다.
 
-![flatten 예제](no_image)
+![flatten 예제](/assets/images/20200624/1.png)
 
 6차원 time-series 로봇팔 데이터를 예로 들어 보겠습니다. 만약 해당 데이터가 10Hz의 샘플링 주기를 가지고 있고, 우리는 약 5초간의 동작 데이터를 활용하여 이상을 탐지하고자 한다면, 한번의 이상탐지를 위해 주어진 데이터는 아래와 같은 형태를 따를 것입니다.
 
@@ -83,7 +83,7 @@ $$
 
 즉, RNN은 다음 time-step의 값을 예측하는 task를 통해 자연스럽게 정상 분포를 학습하게 되고, 비정상 샘플이 주어진다면 likelihood의 값이 낮게 나오게 될 것이므로 우리는 이를 활용하여 시계열 이상탐지를 수행할 수 있는 것입니다.
 
-![예제](no_image)
+![예제](/assets/images/20200624/2.png)
 
 하지만 아쉽게도 이 모델은 auto-regressive(자기회귀) 특성을 가지므로 한계가 있습니다. 한 방향으로만 추론이 이루어지기 때문에, $x_t$ 에 대해서 추론을 수행하고자 할 때, $t$ 이전 시점의 데이터들로부터만 정보를 얻어올 수 있습니다. 하지만 $t$ 이후 시점으로부터도 정보를 얻어와 $x_t$ 를 추론할 수 있다면 훨씬 더 정확한 예측을 수행할 수 있을 것입니다.
 
@@ -93,7 +93,7 @@ $$
 
 그럼 한 발 더 나아가 sequence to sequence와 같은 encoder + decoder 기반의 아키텍처를 생각해볼 수 있습니다.
 
-![아키텍처 예제](no_image)
+![아키텍처 예제](/assets/images/20200624/3.png)
 
 다만, 이 아키텍처는 주어진 입력을 그대로 복원해내야 하기 때문에, 기존의 sequence to sequence와 차별하기 위해서 sequence autoencoder(SeqAE)라고 부르도록 하겠습니다. 이 SeqAE는 여전히 auto-regressive한 decoder를 갖고 있지만, 어쨌든 encoder에서 주어진 모든 time-step을 볼 수 있었기 때문에, 앞서 설명한 아키텍처보다는 조금 더 유리한 부분을 가질 수 있습니다.
 
@@ -113,7 +113,7 @@ $$
 
 사실 앞서 RNN을 통해 이상탐지를 수행하는 방법에 대해서 설명할 때, 빼 놓은 부분이 있습니다. 바로 학습 및 추론 방법 입니다. 먼저, 추론 상황을 가정해보겠습니다. 자연어생성(NLG)과 같은 Auto-regressive한 task를 수행하는 경우, 보통은 decoder를 통해 출력을 뱉어낼 때 decoder의 입력은 이전 time-step의 decoder의 출력이 됩니다.
 
-![예제](no_image)
+![예제](/assets/images/20200624/4.png)
 
 $$
 \hat{x}_t=\text{argmax}\log{P(\text{x}_t|\hat{x}_{<t};\theta)}
@@ -128,7 +128,7 @@ $$\begin{aligned}
 
 즉, decoder의 입력으로 $\hat{x}_{<t}$ 가 아닌, $x_{<t}$ 가 주어졌기 때문에, 가능한 것입니다. 만약 학습할 때에 $\hat{x}_{<t}$ 가 주어진 상태에서 decoder의 출력값과 $x_t$ 와의 MSE를 구한다면, 우리는 Maximum Likelihood Estimation (MLE)를 한다고 할 수 없는 것입니다. 따라서 딥러닝에서 MLE를 통해 시퀀셜 데이터를 학습할 때에는 teacher forcing이라는 방법을 통해 학습을 수행하는 것이 보통입니다.
 
-![Teacher Forcing 예제](no_image)
+![Teacher Forcing 예제](/assets/images/20200624/5.png)
 
 Teacher forcing은 위 그림과 같이 학습 과정에서 decoder의 이전 time-step의 출력이 아닌 이전 time-step의 실제 정답을 decoder에 입력으로 넣어주는 것입니다. 우리는 이런 teacher forcing을 통해 auto-regressive task에서 RNN을 MLE를 통해 학습할 수 있게 됩니다.
 
@@ -142,7 +142,7 @@ Teacher forcing은 위 그림과 같이 학습 과정에서 decoder의 이전 ti
 
 그런데 문제는 teacher forcing을 통해 reconstruction을 구하게 된다면 너무나도 쉬운 task가 되어버린다는 것입니다. 예를 들어 아래와 같이 MNIST를 시퀀셜 데이터로 취급해서 이상탐지를 똑같이 수행해볼 수 있을겁니다. 즉, $28\times28$ 의 MNIST 이미지를 28차원의 벡터가 28 time-step 존재하는 시퀀셜 데이터로 생각해볼 수 있을 것입니다.
 
-![예제](no_image)
+![예제](/assets/images/20200624/6.png)
 
 그럼 teacher forcing을 추론에서 수행하게 된다면, decoder는 이전 time-step에서 틀린 출력 $\hat{x}_{t-1}$ 을 뱉어냈더라도, 현재 time-step의 입력으로 정답 $x_{t-1}$ 을 받게 될겁니다. 그럼 현재 time-step의 출력 $\hat{x}_t$ 를 예측하는 것은 너무나도 쉬워지게 됩니다. 당장 MNIST의 경우에만 보더라도 $x_{t-1}$ 과 거의 유사한 픽셀값을 뱉어내면 거의 맞출테니까요. 즉, 학습 때 보지 못한 형태의 이미지가 들어오더라도 같은 방법을 통해서 대충 맞출 수 있게 되는 것입니다.
 
@@ -152,7 +152,7 @@ Teacher forcing은 위 그림과 같이 학습 과정에서 decoder의 이전 ti
 
 그런데 문제는 또 남아있습니다. teacher forcing을 통해 학습을 진행할 때에도 마찬가지 상황이 발생한다는 것입니다. 특히나 NLG와 같은 discrete value를 출력하는 task가 아니라 continuous value를 뱉어내는 task이기 때문에, $x_{t-1}$ 와 $x_t$ 의 차이가 적어서 생기는 문제로도 생각해볼 수 있습니다. 따라서 teacher forcing을 통해 학습을 수행할 때에도, 너무나도 쉬운 나머지 encoder로부터 많은 정보를 받을 필요가 없어지게 됩니다. 예를 들어 아래와 같이 2 또는 3에 대해서 학습할 때, 한번의 도움만 있으면 충분하지 않을까요?
 
-![2 or 3](no_image)
+![2 or 3](/assets/images/20200624/7.png)
 
 그럼 encoder는 주어진 샘플에 대해서 많은 정보를 인코딩하지 않도록 학습될겁니다. 이것은 결국 추론 단계에서 비정상 샘플이 주어졌을 때, 안좋은 영향을 끼치게 될 것입니다. 이렇게 encoder가 어떤 샘플이 주어지든 비슷한 latent representation으로 인코딩하게 되는 현상을 posterior collapse라고 부릅니다. 물론 위의 예제에서처럼 어쨌든 2와 3을 구분하기 위한 정보가 어느정도는 담겨있을 것이기 때문에, 아무런 정보가 없지는 않겠지만 posterior collapse의 경향이 나타난다고 볼 수 있습니다.
 
