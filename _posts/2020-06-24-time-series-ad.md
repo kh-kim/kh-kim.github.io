@@ -48,7 +48,7 @@ category: blog
 6차원 time-series 로봇팔 데이터를 예로 들어 보겠습니다. 만약 해당 데이터가 10Hz의 샘플링 주기를 가지고 있고, 우리는 약 5초간의 동작 데이터를 활용하여 이상을 탐지하고자 한다면, 한번의 이상탐지를 위해 주어진 데이터는 아래와 같은 형태를 따를 것입니다.
 
 $$
-x\in\mathbb{R}^{\text{10\times5\times6}\text{, where }x\sim{P_D(\text{x})}.
+x\in\mathbb{R}^{10\times5\times6}\text{, where }x\sim{P_D(\text{x})}.
 $$
 
 이때, 이것을 flatten한다면 $6\times10\times5=300$ 차원의 벡터 $\tilde{x}$ 가 될 것입니다. 그럼 이 300차원의 벡터를 오토인코더(autoencoder) $\mathcal{A}$ 에 넣어 학습 및 추론을 수행할 수 있을 것입니다. 이때 우리는 예전 포스팅에서 다루었던 대로 복원 오차(reconstruction error) 또는 RaPP[5]와 같은 방법들을 통해 이상 샘플을 탐지할 수 있습니다.
