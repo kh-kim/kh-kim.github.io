@@ -25,7 +25,36 @@ Language Model Ensemble[x et al., 9999]에서부터 Dual Learning[x et al., 9999
 하지만 BT는 굉장히 이른 시기에 제안되었음에도 불구하고, 간단한 방법으로 비교적 훌륭한 결과물을 제공하기 때문에 위의 여러가지 방법들 중에서도 가장 사랑받는 방법 중에 하나였습니다.
 이 포스팅에서는 Back-Translation에 대해서 살펴보고, 여러가지 관점에서 살펴보고자 합니다.
 
-## Back-Translation이란
+## Back-Translation
+
+Back-Translation은 에딘버러 대학의 리코 센리치 교수가 제안한 방법으로, 센리치 교수님은 BPE를 통한 subword segmentation을 제안한 분으로도 유명합니다.
+Parallel corpus의 부족으로 인해 겪는 가장 기본적인 문제중에 하나는, 디코더인 타깃 언어의 언어모델(Language Model, LM)의 성능 저하를 생각해볼 수 있습니다.
+즉, 다량의 monlingual corpus를 수집하여 풍부한 표현을 학습할 수 있는 언어모델에 비해, parallel corpus만을 활용한 경우에는 훨씬 빈약한 표현만을 배울 수 밖에 없습니다.
+따라서, 소스 언어 문장으로부터 타깃 언어 문장으로 가는 translation model(TM)의 성능 자체도 문제가 될테지만, 번역에 필요한 정보를 바탕으로 완성된 문장을 만들어내는 능력도 부족할 것 입니다.
+
+이때, TM의 성능 저하는 parallel corpus의 부족과 직접적으로 연관이 있지만, LM의 성능 저하는 monolingual corpus를 통해 개선을 꾀해볼 수 있을 것 같습니다.
+하지만 예전 Statistical Machine Translation (SMT)의 경우에는 보통 TM과 LM이 명시적으로 따로 존재하였기 때문에 monolingual corpus를 통한 LM의 성능 개선을 쉽게 시도할 수 있었지만, NMT에선 end-to-end 모델로 이루어져 있으므로 LM이 명시적으로 분리되어 있지 않아 어려움이 있습니다.
+BT는 이러한 상황에서 디코더의 언어모델의 성능을 올리기 위한 (+ 추가적으로 TM의 성능 개선도 약간 기대할 수 있는) 방법을 제안합니다.
+
+보통 번역기를 개발할 경우, 한 쌍의 번역 모델이 자연스럽게 나오게 됩니다.
+왜냐하면 우리는 parallel corpus를 통해 번역기를 개발하므로, 두 방향의 번역기를 학습할 수 있기 때문입니다.
+이때 Back-Translation이라는 이름에서 볼 수 있듯이, BT는 반대쪽 모델을 타깃 모델을 개선하는데 활용합니다.
+
+예를 들어 아래와 같이 parallel corpus $\mathcal{B}$ 와 monolingual corpus $\mathcal{M}$ 을 수집한 상황을 생각해볼 수 있습니다.
+
+$$\begin{gathered}
+\mathcal{B}=\{(x_n, y_n)\}_{n=1}^N \\
+\mathcal{M}=\{y_s\}_{s=1}^S
+\end{gathered}$$
+
+그럼 자연스럽게 우리는 일단은 $\mathcal{B}$ 를 활용하여 두 개의 모델을 얻을 수 있습니다.
+
+$$\begin{aligned}
+\hat{\theta}_{x\rightarrow{y}}&=\underset{\theta\in\Theta}{\text{argmax}}\sum_{n=1}^N{\log{P(y_n|x_n;\theta_{x\rightarrow{y}})}} \\
+\hat{\theta}_{y\rightarrow{x}}&=\underset{\theta\in\Theta}{\text{argmax}}\sum_{n=1}^N{\log{P(x_n|y_n;\theta_{y\rightarrow{x}})}} \\
+\end{aligned}$$
+
+즉, 
 
 ### 성능
 
