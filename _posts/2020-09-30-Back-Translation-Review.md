@@ -267,7 +267,8 @@ $$\begin{aligned}
 \bigg]
 \end{aligned}$$
 
-위의 수식에 따르면, 샘플링된 $c$ 에 따라 $x$ 를 실제 parallel corpus에서 활용하거나 $P(\text{x}|y;\theta_{y\rightarrow{x}})$ 에서 샘플링하여 타깃 파라미터 $\theta_{x\rightarrow{y}}$ 의 신경망에 tag $c$ 와 함께 넣어, log-likelihood인 $\log{P(y|x,c;\theta_{x\rightarrow{y}})}$ 를 구할 것 입니다. 즉, 여기서 $P(\text{x}|y,c=\text{BT})$ 는 이미 반대쪽 모델에 noise가 추가된 형태라고 보아야 할 것입니다.
+위의 수식에 따르면, 샘플링된 $c$ 에 따라 $x$ 를 실제 parallel corpus에서 활용하거나 파라미터 $\theta_{y\rightarrow{x}}$ 의 신경망에서 샘플링하여 타깃 파라미터 $\theta_{x\rightarrow{y}}$ 의 신경망에 tag $c$ 와 함께 넣어, log-likelihood인 $f(x,c;\theta_{x\rightarrow{y}})$ 를 구할 것 입니다.
+즉, 여기서 $P(\text{x}|y,c=\text{BT})$ 는 이미 반대쪽 모델에 noise가 추가된 형태라고 보아야 할 것입니다.
 
 이때 KLD term을 해석해본다면 재미있을 것 같습니다.
 좌변을 최대화 하기 위해서는 KLD term이 최소화 되어야 할 것입니다.
