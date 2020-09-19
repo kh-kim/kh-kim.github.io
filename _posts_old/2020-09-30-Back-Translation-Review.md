@@ -268,17 +268,32 @@ $$\begin{aligned}
 \end{aligned}$$
 
 위의 수식에 따르면, 샘플링된 $c$ 에 따라 $x$ 를 실제 parallel corpus에서 활용하거나 $P(\text{x}|y;\theta_{y\rightarrow{x}})$ 에서 샘플링하여 타깃 파라미터 $\theta_{x\rightarrow{y}}$ 의 신경망에 tag $c$ 와 함께 넣어, log-likelihood인 $\log{P(y|x,c;\theta_{x\rightarrow{y}})}$ 를 구할 것 입니다.
+즉, 여기서 $P(\text{x}|y,c=\text{BT})$ 는 이미 반대쪽 모델에 noise가 추가된 형태라고 보아야 할 것입니다.
 
 이때 KLD term을 해석해본다면 재미있을 것 같습니다.
 좌변을 최대화 하기 위해서는 KLD term이 최소화 되어야 할 것입니다.
-따라서 분포 $P(\text{x}|y,c)$ 와 $P(\text{x}|c)$ 는 최대한 같아져야 할 것입니다.
+따라서 분포 $P(\text{x}|y,c)$ 와 $P(\text{x}|c)$ 는 최대한 같아져야 할 것입니다. -- 여기서 $c\ne\text{BT}$ 인 경우는 일단 제외하고 생각하도록 하겠습니다.
 이에따라 랜덤변수 $\text{x}$ 와 $\text{y}$ 의 mutual information이 최소가 될 것입니다.
 즉, 이것의 의미는 $y$ 의 정보에 상관 없이 pseudo corpus 자체의 언어모델 $P(\text{x}|c)$ 를 따르도록 될 것이란 것이고, 또한 이로 인해 $y\rightarrow{x}$ 의 번역 품질이 낮아질 것이라고 예상할 수 있습니다.
-실제로 Noise added BT의 경우에 일부러 noise를 섞어 번역의 품질을 희생시켰으며, 그 과정에서 bias를 학습하지 않도록 할 수 있었습니다.
+실제로 Noise added BT[x et al., 9999]의 경우에 일부러 noise를 섞어 번역의 품질을 희생시켰으며, 그 과정에서 bias를 학습하지 않도록 할 수 있었습니다.
 
-또한 KL term에서 $P(\text{x}|y,c)$ 는 $P(\text{x})$ 가 아닌 $P(\text{x}|c)$ 와 가까워지도록 하였기 때문에, 
+### 사족: 샘플링 방식을 학습하는 것은 어떨까?
+
+앞서 언급한대로 $x\sim{P(\text{x}|y,c)}$ 과정에서 이미 우리는 noise가 추가된 형태로 이해해볼 수 있을 것 같습니다.
+즉, 기존의 $\theta_{y\rightarrow{x}}$ 함수를 한번 더 감싸서 noise added BT를 구현할 수도 있을 것입니다.
+또한 KL term에서 $P(\text{x}|y,c)$ 는 $P(\text{x})$ 가 아닌 $P(\text{x}|c)$ 와 가까워지도록 하였기 때문에, 만약 우리가 noise를 섞어주는 방식도 parameterize(e.g. neural network)한다면 학습에 활용할 수 있을 것입니다.
 
 ## 정리하며
 
+이번 포스팅에서는 monolingual corpus를 통해 NMT의 성능을 향상시키는 가장 대표적인 방법인 Back-Translation에 대해서 살펴보았습니다.
+BT는 간단한 방법과 이에 비해 높은 성능 향상을 인해 널리 사랑받고 있는 방법 중 하나입니다.
+하지만 아쉽게도 low-resource NMT 상황이 아니면, original text보단 translationese를 번역하는데 대부분의 성능 향상이 집중되는 것을 확인할 수 있었습니다.
+그렇다고 해서 BT가 별로다라는 이야기는 아닙니다.
+어쨌든 low-resource NMT에서는 매우 강력한 힘을 발휘하고 있으며, high-resource(?) NMT에서도 어쨌든 득실을 따져보면 득이 더 크기 때문입니다.
+
+또한 기존의 BT는 직관에 의해서 보통 설명이 되기 마련이었는데, [x et al., 9999]와 같은 방법을 통해 우리는 BT를 좀 더 수식적으로도 이해할 수 있었고, 한 발 더 나아가 Tagged BT에 대해서도 새롭게 수식으로 접근해보는 시간도 가져보았습니다.
+위와 같이 수식을 통해 접근을 함으로써, 우리는 BT에 대한 더 나은 이해와 더 높은 성능 개선을 위한 한 걸음을 더 나아갈 수 있을 것이라고 생각합니다.
+
 ## 참고문헌
 
+- [x et al., 9999] blah blah
