@@ -7,7 +7,7 @@ category: blog
 
 # Back-Translation Review
 
-이번 포스팅은 Neural Machine Translation (NMT)에서 널리 사랑받고 있는 Back-Translation (이하 BT)에 대해서 좀 더 이해해보는 시간을 가지려 합니다.
+이번 포스팅은 Neural Machine Translation (NMT)에서 널리 사랑받고 있는 Back-Translation[1] (이하 BT)에 대해서 좀 더 이해해보는 시간을 가지려 합니다.
 기존에 제안된 BT에 대해서 살펴보고, 기본 BT의 한계를 극복하기 위해 제안된 여러가지 방법들을 여러가지 관점(실험 + 수식)에서 이해해보고자 합니다.
 
 ## Leverage with Monolingual Corpus
@@ -21,13 +21,13 @@ NMT는 2014년 Sequence-to-Sequence의 발명 이후로 자연어생성(NLG) 분
 더욱이 인터넷 등에서 무한대로 모을 수 있는 unlabled corpus에 반해, parallel corpus는 매우 수집이 어렵고 비싸기 때문에, 한국어-영어 번역에서도 여전히 parallel corpus 수집에 대한 목마름은 항상 남아있습니다.
 
 따라서 예전부터 단방향 코퍼스(monolingual corpus)를 활용하여 번역기의 성능을 높이고자 하는 시도들은 매우 많았고, 개인적으로도 굉장히 좋아하는 주제라고 생각합니다. -- 기계번역의 꽃이랄까요.
-Language Model Ensemble[x et al., 9999]에서부터 Dual Learning[x et al., 9999]에 이르기까지 정말 많은 연구들이 있었고, 모두 parallel corpus만을 활용한 것보다 더 나은 성능을 제공할 수 있었습니다.
+Language Model Ensemble[2]에서부터 Dual Learning[3, 4]에 이르기까지 정말 많은 연구들이 있었고, 모두 parallel corpus만을 활용한 것보다 더 나은 성능을 제공할 수 있었습니다.
 하지만 BT는 굉장히 이른 시기에 제안되었음에도 불구하고, 간단한 방법으로 비교적 훌륭한 결과물을 제공하기 때문에 위의 여러가지 방법들 중에서도 가장 사랑받는 방법 중에 하나였습니다.
 이 포스팅에서는 Back-Translation에 대해서 살펴보고, 여러가지 관점에서 살펴보고자 합니다.
 
 ## Back-Translation
 
-Back-Translation은 에딘버러 대학의 리코 센리치 교수가 제안한 방법으로, 센리치 교수님은 BPE를 통한 subword segmentation을 제안[x et al., 9999]한 분으로도 유명합니다.
+Back-Translation은 에딘버러 대학의 리코 센리치 교수가 제안한 방법으로, 센리치 교수님은 BPE를 통한 subword segmentation을 제안[5]한 분으로도 유명합니다.
 Parallel corpus의 부족으로 인해 겪는 가장 기본적인 문제중에 하나는, 디코더인 타깃 언어의 언어모델(Language Model, LM)의 성능 저하를 생각해볼 수 있습니다.
 즉, 다량의 monlingual corpus를 수집하여 풍부한 표현을 학습할 수 있는 언어모델에 비해, parallel corpus만을 활용한 경우에는 훨씬 빈약한 표현만을 배울 수 밖에 없습니다.
 따라서, 소스 언어 문장으로부터 타깃 언어 문장으로 가는 translation model(TM)의 성능 자체도 문제가 될테지만, 번역에 필요한 정보를 바탕으로 완성된 문장을 만들어내는 능력도 부족할 것 입니다.
@@ -88,14 +88,14 @@ $$
 
 그런데 중요한 점은 pseudo corpus의 양이 너무 많아서는 안된다는 것입니다.
 비록 우리는 무한대에 가까운 monolingual corpus를 얻어 pseudo corpus를 만들어낼 수 있겠지만, 만약 그럴경우 pseudo corpus가 기존 parallel corpus를 압도해버릴 수 있습니다.
-Pseudo corpus의 경우에는 인코더에 들어갈 $\hat{x}$ 이 실제 정답과는 일부 다를 수 있기 때문이고, 더욱이 $\theta_{y\rightarrow{x}}$ 에 의해 bias가 생겨있는 상태일 것이므로, 너무 많은 양의 pseudo corpus를 활용할 경우 $\theta_{x\rightarrow{y}}$ 가 잘못된 bias를 학습할 경우도 생각해볼 수 있습니다. [x et al., 9999]
+Pseudo corpus의 경우에는 인코더에 들어갈 $\hat{x}$ 이 실제 정답과는 일부 다를 수 있기 때문이고, 더욱이 $\theta_{y\rightarrow{x}}$ 에 의해 bias가 생겨있는 상태일 것이므로, 너무 많은 양의 pseudo corpus를 활용할 경우 $\theta_{x\rightarrow{y}}$ 가 잘못된 bias를 학습할 경우도 생각해볼 수 있습니다. [6]
 따라서 우리는 제한된 양의 $\mathcal{M}$ 만 활용할 수 있으며, 이는 또 하나의 하이퍼파라미터를 추가시킵니다.
 그리고 이 하이퍼파라미터는 보통 기존 parallel corpus의 2~3배 정도가 적당하다고 알려져 있습니다.
 
 ## Noise 추가를 통한 Back-Translation 개선
 
 실제 모든 $\mathcal{M}$ 을 활용하지 못하고 제한된 양을 활용할 수 밖에 없기 때문에, 이 제한된 양을 좀 더 늘릴수 없을지 또 다른 연구들이 이어졌습니다.
-[x et al., 9999]에서는 pseudo corpus를 생성할 때, noise를 섞으면 BT의 성능이 더 향상되는 것을 확인하였습니다.
+[7]에서는 pseudo corpus를 생성할 때, noise를 섞으면 BT의 성능이 더 향상되는 것을 확인하였습니다.
 예를 들어 generation을 하는 과정에서 argmax(or greedy)를 통해 번역 문장을 생성하는 것보다, random sampling을 통해 random noise를 섞어주거나 beam seach 과정에서 약간의 noise를 섞어주는 것이 기존 BT보다 더 나은 성능을 제공한다는 것입니다.
 
 ![결과 테이블](/assets/images/20200930/2.png)
@@ -105,7 +105,7 @@ Pseudo corpus의 경우에는 인코더에 들어갈 $\hat{x}$ 이 실제 정답
 ## Tagged Back-Translation
 
 여기서 한 발 더 나아가 더 쉬운 방법을 통해 더 높은 성능을 제공하는 방법도 제안되었습니다.
-[x et al., 9999]에서는 인코더에서의 잘못된 bias 학습으로 인해 번역기 전체 성능이 하락되는 것을 막기 위해, pseudo corpus에 tag를 붙인 상태로 학습하는 것을 제안하였습니다.
+[6]에서는 인코더에서의 잘못된 bias 학습으로 인해 번역기 전체 성능이 하락되는 것을 막기 위해, pseudo corpus에 tag를 붙인 상태로 학습하는 것을 제안하였습니다.
 좀 더 정확히 말하면 인코더에 입력으로 들어가는 소스 언어의 pseudo sentence의 맨 앞에 pseudo corpus라는 tag를 넣어주어, 네트워크가 pseudo corpus에 대해서는 다르게 행동하여, 실제 테스트 환경에서는 잘못 학습된 bias로 인해 번역 성능이 낮아지는 것을 막고자 하였습니다.
 
 ![결과 테이블](/assets/images/20200930/3.png)
@@ -118,7 +118,7 @@ Pseudo corpus의 경우에는 인코더에 들어갈 $\hat{x}$ 이 실제 정답
 ## 실제 Back-Translation은 효과가 있을까?
 
 이처럼 BT를 활용한 방법들은 간단하면서도 높은 성능을 제공하는 효율성으로 널리 사랑받고 있습니다.
-이때, [x et al., 9999]에서는 실제로 BT가 겉으로 보이는 성능 만큼이나 실제로도 번역기의 성능을 개선하는데 도움이 되는지 분석해 보았습니다.
+이때, [8]에서는 실제로 BT가 겉으로 보이는 성능 만큼이나 실제로도 번역기의 성능을 개선하는데 도움이 되는지 분석해 보았습니다.
 이를 위해 이 논문에서는 아래의 3가지 질문에 대해서 BT에 실제로 어떻게 동작하는지 좀 더 검증해보고자 하였습니다. -- 원문 발췌
 
 - Q1. Do NMT systems trained on large backtranslated data capture some of the characteristics of human-produced translations, i.e., translationese?
@@ -147,7 +147,7 @@ Pseudo sentence $\hat{x}$ 를 인코더에 넣어 학습시키는 것은 bias가
 ## Back-Translation 수식으로 풀어보기
 
 사실 BT는 부족한 코퍼스로 인한 디코더 언어모델의 성능개선이라는 미명아래, 직관적인 설명에 의존해서 제안되었습니다.
-[x et al., 9999]에서는 여기에 수식으로 BT를 설명하는 방법을 제안하였습니다.
+[9]에서는 여기에 수식으로 BT를 설명하기도 하였습니다.
 
 $$\begin{gathered}
 \mathcal{B}=\{(x_n, y_n)\}_{n=1}^N \\
@@ -168,7 +168,7 @@ $$\begin{aligned}
 }}
 \end{aligned}$$
 
-그리고 Jensen's Inequality를 활용하여 부등식을 완성할 수 있습니다. -- VAE[x et al., 9999]의 전개와 매우 비슷합니다.
+그리고 Jensen's Inequality를 활용하여 부등식을 완성할 수 있습니다. -- VAE[10]의 전개와 매우 비슷합니다.
 
 $$\begin{aligned}
 \log{P(y)}&=\log{\sum_{x\in\mathcal{X}}{
@@ -275,7 +275,7 @@ $$\begin{aligned}
 따라서 분포 $P(\text{x}|y,c)$ 와 $P(\text{x}|c)$ 는 최대한 같아져야 할 것입니다. -- 여기서 $c\ne\text{BT}$ 인 경우는 일단 제외하고 생각하도록 하겠습니다.
 이에따라 랜덤변수 $\text{x}$ 와 $\text{y}$ 의 mutual information이 최소가 될 것입니다.
 즉, 이것의 의미는 $y$ 의 정보에 상관 없이 pseudo corpus 자체의 언어모델 $P(\text{x}|c)$ 를 따르도록 될 것이란 것이고, 또한 이로 인해 $y\rightarrow{x}$ 의 번역 품질이 낮아질 것이라고 예상할 수 있습니다.
-실제로 Noise added BT[x et al., 9999]의 경우에 일부러 noise를 섞어 번역의 품질을 희생시켰으며, 그 과정에서 bias를 학습하지 않도록 할 수 있었습니다.
+실제로 Noise added BT[7]의 경우에 일부러 noise를 섞어 번역의 품질을 희생시켰으며, 그 과정에서 bias를 학습하지 않도록 할 수 있었습니다.
 
 ### 사족: 샘플링 방식을 학습하는 것은 어떨까?
 
@@ -291,9 +291,21 @@ BT는 간단한 방법과 이에 비해 높은 성능 향상을 인해 널리 �
 그렇다고 해서 BT가 별로다라는 이야기는 아닙니다.
 어쨌든 low-resource NMT에서는 매우 강력한 힘을 발휘하고 있으며, high-resource(?) NMT에서도 어쨌든 득실을 따져보면 득이 더 크기 때문입니다.
 
-또한 기존의 BT는 직관에 의해서 보통 설명이 되기 마련이었는데, [x et al., 9999]와 같은 방법을 통해 우리는 BT를 좀 더 수식적으로도 이해할 수 있었고, 한 발 더 나아가 Tagged BT에 대해서도 새롭게 수식으로 접근해보는 시간도 가져보았습니다.
+또한 기존의 BT는 직관에 의해서 보통 설명이 되기 마련이었는데, [9]와 같은 방법을 통해 우리는 BT를 좀 더 수식적으로도 이해할 수 있었고, 한 발 더 나아가 Tagged BT에 대해서도 새롭게 수식으로 접근해보는 시간도 가져보았습니다.
 위와 같이 수식을 통해 접근을 함으로써, 우리는 BT에 대한 더 나은 이해와 더 높은 성능 개선을 위한 한 걸음을 더 나아갈 수 있을 것이라고 생각합니다.
 
 ## 참고문헌
 
-- [x et al., 9999] blah blah
+- [1] [Sennrich et al., Improving Neural Machine Translation Models with Monolingual Data, ACL, 2016](https://www.aclweb.org/anthology/P16-1009/)
+- [2] [Gulcehre et al., On Using Monolingual Corpora in Neural Machine Translation, ArXiv, 2015](https://arxiv.org/abs/1503.03535)
+- [3] [He and Xia et al., Dual Learning for Machine Translation, NIPS, 2016](https://papers.nips.cc/paper/6469-dual-learning-for-machine-translation)
+- [4] [Wang et al., Dual Transfer Learning for Neural Machine Translation with Marginal Distribution Regularization, AAAI, 2018](https://www.microsoft.com/en-us/research/publication/dual-transfer-learning-neural-machine-translation-marginal-distribution-regularization/)
+- [5] [Sennrich et al., Neural Machine Translation of Rare Words with Subword Units, ACL, 2016](https://www.aclweb.org/anthology/P16-1162/)
+- [6] [Caswell et al., Tagged Back-Translation, ACL, 2019](https://www.aclweb.org/anthology/W19-5206.pdf)
+- [7] [Edunov et al., Understanding Back-Translation at Scale, ACL, 2018](https://www.aclweb.org/anthology/D18-1045.pdf)
+- [8] [Marie et al., Tagged Back-translation Revisited: Why Does It Really Work?, ACL, 2020](https://www.aclweb.org/anthology/2020.acl-main.532/)
+- [9] [Zhang et al., Joint Training for Neural Machine Translation Models with Monolingual Data, AAAI, 2018](https://arxiv.org/abs/1803.00353)
+- [10] [Kingma et al., Auto-Encoding Variational Bayes, ICLR, 2014](https://arxiv.org/abs/1312.6114)
+- [11] [Currey et al., Copied Monolingual Data Improves Low-Resource Neural Machine Translation, ACL, 2017](https://www.aclweb.org/anthology/W17-4715/)
+- [12] [Domhan et al., Using Target-side Monolingual Data for Neural Machine Translation through Multi-task Learning, EMNLP, 2017](https://www.aclweb.org/anthology/D17-1158/)
+- [13] [Graça et al., Generalizing Back-Translation in Neural Machine Translation, ACL, 2019](https://www.aclweb.org/anthology/W19-5205/)
