@@ -27,7 +27,7 @@ Language Model Ensemble[x et al., 9999]에서부터 Dual Learning[x et al., 9999
 
 ## Back-Translation
 
-Back-Translation은 에딘버러 대학의 리코 센리치 교수가 제안한 방법으로, 센리치 교수님은 BPE를 통한 subword segmentation을 제안한 분으로도 유명합니다.
+Back-Translation은 에딘버러 대학의 리코 센리치 교수가 제안한 방법으로, 센리치 교수님은 BPE를 통한 subword segmentation을 제안[x et al., 9999]한 분으로도 유명합니다.
 Parallel corpus의 부족으로 인해 겪는 가장 기본적인 문제중에 하나는, 디코더인 타깃 언어의 언어모델(Language Model, LM)의 성능 저하를 생각해볼 수 있습니다.
 즉, 다량의 monlingual corpus를 수집하여 풍부한 표현을 학습할 수 있는 언어모델에 비해, parallel corpus만을 활용한 경우에는 훨씬 빈약한 표현만을 배울 수 밖에 없습니다.
 따라서, 소스 언어 문장으로부터 타깃 언어 문장으로 가는 translation model(TM)의 성능 자체도 문제가 될테지만, 번역에 필요한 정보를 바탕으로 완성된 문장을 만들어내는 능력도 부족할 것 입니다.
@@ -84,7 +84,7 @@ $$
 
 아래와 같이 BT는 굉장히 간단한 구현 방법에 비해 준수한 성능 개선 효과를 보여줍니다.
 
-![결과 테이블]()
+![결과 테이블](/assets/images/20200930/1.png)
 
 그런데 중요한 점은 pseudo corpus의 양이 너무 많아서는 안된다는 것입니다.
 비록 우리는 무한대에 가까운 monolingual corpus를 얻어 pseudo corpus를 만들어낼 수 있겠지만, 만약 그럴경우 pseudo corpus가 기존 parallel corpus를 압도해버릴 수 있습니다.
@@ -98,7 +98,7 @@ Pseudo corpus의 경우에는 인코더에 들어갈 $\hat{x}$ 이 실제 정답
 [x et al., 9999]에서는 pseudo corpus를 생성할 때, noise를 섞으면 BT의 성능이 더 향상되는 것을 확인하였습니다.
 예를 들어 generation을 하는 과정에서 argmax(or greedy)를 통해 번역 문장을 생성하는 것보다, random sampling을 통해 random noise를 섞어주거나 beam seach 과정에서 약간의 noise를 섞어주는 것이 기존 BT보다 더 나은 성능을 제공한다는 것입니다.
 
-![결과 테이블]()
+![결과 테이블](/assets/images/20200930/2.png)
 
 이는 인코더에서 $\hat{x}$ 를 학습할 때, 기존 $\theta_{y\rightarrow{x}}$ 의 bias를 학습하는 것을 방해하는 일종의 regularization 역할로도 생각해볼 수 있습니다.
 
@@ -108,7 +108,7 @@ Pseudo corpus의 경우에는 인코더에 들어갈 $\hat{x}$ 이 실제 정답
 [x et al., 9999]에서는 인코더에서의 잘못된 bias 학습으로 인해 번역기 전체 성능이 하락되는 것을 막기 위해, pseudo corpus에 tag를 붙인 상태로 학습하는 것을 제안하였습니다.
 좀 더 정확히 말하면 인코더에 입력으로 들어가는 소스 언어의 pseudo sentence의 맨 앞에 pseudo corpus라는 tag를 넣어주어, 네트워크가 pseudo corpus에 대해서는 다르게 행동하여, 실제 테스트 환경에서는 잘못 학습된 bias로 인해 번역 성능이 낮아지는 것을 막고자 하였습니다.
 
-![결과 테이블]()
+![결과 테이블](/assets/images/20200930/3.png)
 
 이 결과 기존 BT 뿐만 아니라, Noise added BT에 비해서도 더 높은 성능 향상을 이끌어냈으며, 심지어 기존 방법에 비해 더 많은 monolingual corpus를 활용 하였을 때도 성능의 저하가 이루어지지 않는 것을 확인하였습니다.
 이것은 전체 monolingual corpus를 활용할 수 없어 아쉬움이 남던 BT의 단점을 획기적으로 개선한 것이라고 볼 수 있을 것입니다.
@@ -129,7 +129,7 @@ Pseudo corpus의 경우에는 인코더에 들어갈 $\hat{x}$ 이 실제 정답
 Pseudo sentence $\hat{x}$ 를 인코더에 넣어 학습시키는 것은 bias가 포함되어 있기 때문에, translationese를 잘 번역하도록 할 뿐 실제 원문(본문에서는 original text라고 표현)에 대한 번역 성능은 검증이 필요하다는 것입니다.
 이를 위해서 저자는 아래와 같이 기존 각 연도별 WMT 테스트셋에서 original text와 translationese를 구분해서 BT와 Tagged BT의 성능을 각각 검증해보았습니다.
 
-![결과 테이블]()
+![결과 테이블](/assets/images/20200930/4.png)
 
 그 결과 재미있게도 vanilla BT의 경우에는 translationese가 입력으로 주어졌을 때의 성능 향상만 있었을 뿐, original text에 대해서는 오히려 성능이 하락하는 것을 알 수 있습니다.
 특히 translationese에 대한 성능 개선이 두드러지는 바람에, 둘이 섞인 전체 테스트셋에서는 오히려 Tagged BT에 비해 성능 향상이 더 큰 것처럼 착시 현상을 일으키기까지 합니다.
@@ -140,7 +140,7 @@ Pseudo sentence $\hat{x}$ 를 인코더에 넣어 학습시키는 것은 bias가
 
 물론 아래와 같이 low-resource 환경에서의 번역일 때는 BT와 Tagged BT 모두 번역 성능 개선에 매우 큰 도움을 주는 것을 확인할 수 있습니다.
 
-![결과 테이블]()
+![결과 테이블](/assets/images/20200930/5.png)
 
 여기에서도 Tagged BT가 기존 BT보다 original text에서 더 나은 성능 개선 폭을 보이는 것을 확인할 수 있습니다.
 
