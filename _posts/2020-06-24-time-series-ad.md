@@ -43,12 +43,12 @@ category: blog
 
 하지만 바로 RNN과 같은 시퀀셜 모델을 도입하기에 앞서, time-series 데이터를 1차원의 tensor로 flatten하여 일반적인 iid 모델에 넣어보는 것도 좋은 시도(or baseline)가 될 수 있습니다.
 
-![flatten 예제](no_image)
+![flatten 예제](/assets/images/20200624/1.png)
 
 6차원 time-series 로봇팔 데이터를 예로 들어 보겠습니다. 만약 해당 데이터가 10Hz의 샘플링 주기를 가지고 있고, 우리는 약 5초간의 동작 데이터를 활용하여 이상을 탐지하고자 한다면, 한번의 이상탐지를 위해 주어진 데이터는 아래와 같은 형태를 따를 것입니다.
 
 $$
-x\in\mathbb{R}^{6\times10\times5}\text{, where }x\sim{P_D(\text{x})}.
+x\in\mathbb{R}^{10\times5\times6}\text{, where }x\sim{P_D(\text{x})}.
 $$
 
 이때, 이것을 flatten한다면 $6\times10\times5=300$ 차원의 벡터 $\tilde{x}$ 가 될 것입니다. 그럼 이 300차원의 벡터를 오토인코더(autoencoder) $\mathcal{A}$ 에 넣어 학습 및 추론을 수행할 수 있을 것입니다. 이때 우리는 예전 포스팅에서 다루었던 대로 복원 오차(reconstruction error) 또는 RaPP[5]와 같은 방법들을 통해 이상 샘플을 탐지할 수 있습니다.
@@ -83,7 +83,7 @@ $$
 
 즉, RNN은 다음 time-step의 값을 예측하는 task를 통해 자연스럽게 정상 분포를 학습하게 되고, 비정상 샘플이 주어진다면 likelihood의 값이 낮게 나오게 될 것이므로 우리는 이를 활용하여 시계열 이상탐지를 수행할 수 있는 것입니다.
 
-![예제](no_image)
+![Single RNN의 generation 예제](/assets/images/20200624/2.png)
 
 하지만 아쉽게도 이 모델은 auto-regressive(자기회귀) 특성을 가지므로 한계가 있습니다. 한 방향으로만 추론이 이루어지기 때문에, $x_t$ 에 대해서 추론을 수행하고자 할 때, $t$ 이전 시점의 데이터들로부터만 정보를 얻어올 수 있습니다. 하지만 $t$ 이후 시점으로부터도 정보를 얻어와 $x_t$ 를 추론할 수 있다면 훨씬 더 정확한 예측을 수행할 수 있을 것입니다.
 
@@ -93,7 +93,7 @@ $$
 
 그럼 한 발 더 나아가 sequence to sequence와 같은 encoder + decoder 기반의 아키텍처를 생각해볼 수 있습니다.
 
-![아키텍처 예제](no_image)
+![Sequence Autoencoder 예제](/assets/images/20200624/3.png)
 
 다만, 이 아키텍처는 주어진 입력을 그대로 복원해내야 하기 때문에, 기존의 sequence to sequence와 차별하기 위해서 sequence autoencoder(SeqAE)라고 부르도록 하겠습니다. 이 SeqAE는 여전히 auto-regressive한 decoder를 갖고 있지만, 어쨌든 encoder에서 주어진 모든 time-step을 볼 수 있었기 때문에, 앞서 설명한 아키텍처보다는 조금 더 유리한 부분을 가질 수 있습니다.
 
@@ -107,13 +107,13 @@ $$
 
 이때 흔히 성능을 개선하기 위한 포인트로 attention을 추가하는 것을 고려해볼 수 있습니다. 예를 들어 기계번역을 위한 sequence to sequence(seq2seq) 아키텍처에서 attention이 추가 되면, seq2seq 내부 RNN의 hidden state의 capacity 부족 등의 문제로 인한 성능 하락을 막을 수 있습니다. 따라서 attention은 자연어처리 분야에서 매우 중대한 발전이라고 볼 수 있습니다.
 
-하지만 이상탐지 문제 해결 관점에서는 attention을 곧바로 적용하기에는 무리가 있습니다. 기계번역과 같은 task에서는 더 나은 문장을 생성하기 위해서 RNN의 hidden state를 극복하기 위한 대안으로 제시되었지만, 이상탐지에서는 bottleneck의 latent representation $z$ (hidden state)에 압축된 정보가 무엇인지가 중요합니다. 비정상 샘플이었다면 정상적으로 압축이 수행되지 않아, $z$ 에 복원을 위한 충분한 정보가 담겨있지 않을 것이기 때문입니다. 하지만 여기서 우리가 attention을 사용한다면, $z$ 의 압축 품질 여부와 상관 없이 decoder는 attention을 통해 encoder에서 충분한 정보를 access할 수 있을 것이기 때문입니다. 따라서 attention을 시도해 보는 것은 좋지만, 이 문제를 해결하는 방향이 함께 시도되어야 할 것이라 생각합니다.
+하지만 이상탐지 문제 해결 관점에서는 attention을 곧바로 적용하기에는 무리가 있습니다. 기계번역과 같은 task에서는 더 나은 문장을 생성하기 위해서 RNN의 hidden state를 극복하기 위한 대안으로 제시되었지만, 이상탐지에서는 bottleneck의 latent representation $z$ (hidden state)에 압축된 정보가 무엇인지가 중요합니다. 비정상 샘플이었다면 정상적으로 압축이 수행되지 않아, $z$ 에 복원을 위한 충분한 정보가 담겨있지 않을 것이기 때문입니다. 하지만 여기서 우리가 attention을 사용한다면, $z$ 의 압축 품질 여부와 상관 없이 decoder는 attention을 통해 encoder에서 충분한 정보를 access할 수 있을 것이기 때문입니다. 따라서 attention을 시도해 보는 것은 좋지만, 이 문제를 해결하는 방향이 함께 시도[6]되어야 할 것이라 생각합니다.
 
 #### Teacher Forcing
 
 사실 앞서 RNN을 통해 이상탐지를 수행하는 방법에 대해서 설명할 때, 빼 놓은 부분이 있습니다. 바로 학습 및 추론 방법 입니다. 먼저, 추론 상황을 가정해보겠습니다. 자연어생성(NLG)과 같은 Auto-regressive한 task를 수행하는 경우, 보통은 decoder를 통해 출력을 뱉어낼 때 decoder의 입력은 이전 time-step의 decoder의 출력이 됩니다.
 
-![예제](no_image)
+![Sequence Autoencoder의 generation 예제](/assets/images/20200624/4.png)
 
 $$
 \hat{x}_t=\text{argmax}\log{P(\text{x}_t|\hat{x}_{<t};\theta)}
@@ -128,7 +128,7 @@ $$\begin{aligned}
 
 즉, decoder의 입력으로 $\hat{x}_{<t}$ 가 아닌, $x_{<t}$ 가 주어졌기 때문에, 가능한 것입니다. 만약 학습할 때에 $\hat{x}_{<t}$ 가 주어진 상태에서 decoder의 출력값과 $x_t$ 와의 MSE를 구한다면, 우리는 Maximum Likelihood Estimation (MLE)를 한다고 할 수 없는 것입니다. 따라서 딥러닝에서 MLE를 통해 시퀀셜 데이터를 학습할 때에는 teacher forcing이라는 방법을 통해 학습을 수행하는 것이 보통입니다.
 
-![Teacher Forcing 예제](no_image)
+![Sequence Autoencoder에서의 Teacher Forcing 예제](/assets/images/20200624/5.png)
 
 Teacher forcing은 위 그림과 같이 학습 과정에서 decoder의 이전 time-step의 출력이 아닌 이전 time-step의 실제 정답을 decoder에 입력으로 넣어주는 것입니다. 우리는 이런 teacher forcing을 통해 auto-regressive task에서 RNN을 MLE를 통해 학습할 수 있게 됩니다.
 
@@ -142,7 +142,7 @@ Teacher forcing은 위 그림과 같이 학습 과정에서 decoder의 이전 ti
 
 그런데 문제는 teacher forcing을 통해 reconstruction을 구하게 된다면 너무나도 쉬운 task가 되어버린다는 것입니다. 예를 들어 아래와 같이 MNIST를 시퀀셜 데이터로 취급해서 이상탐지를 똑같이 수행해볼 수 있을겁니다. 즉, $28\times28$ 의 MNIST 이미지를 28차원의 벡터가 28 time-step 존재하는 시퀀셜 데이터로 생각해볼 수 있을 것입니다.
 
-![예제](no_image)
+![MNIST 숫자 2를 sequential 데이터로 취급할 때](/assets/images/20200624/6.png)
 
 그럼 teacher forcing을 추론에서 수행하게 된다면, decoder는 이전 time-step에서 틀린 출력 $\hat{x}_{t-1}$ 을 뱉어냈더라도, 현재 time-step의 입력으로 정답 $x_{t-1}$ 을 받게 될겁니다. 그럼 현재 time-step의 출력 $\hat{x}_t$ 를 예측하는 것은 너무나도 쉬워지게 됩니다. 당장 MNIST의 경우에만 보더라도 $x_{t-1}$ 과 거의 유사한 픽셀값을 뱉어내면 거의 맞출테니까요. 즉, 학습 때 보지 못한 형태의 이미지가 들어오더라도 같은 방법을 통해서 대충 맞출 수 있게 되는 것입니다.
 
@@ -152,7 +152,7 @@ Teacher forcing은 위 그림과 같이 학습 과정에서 decoder의 이전 ti
 
 그런데 문제는 또 남아있습니다. teacher forcing을 통해 학습을 진행할 때에도 마찬가지 상황이 발생한다는 것입니다. 특히나 NLG와 같은 discrete value를 출력하는 task가 아니라 continuous value를 뱉어내는 task이기 때문에, $x_{t-1}$ 와 $x_t$ 의 차이가 적어서 생기는 문제로도 생각해볼 수 있습니다. 따라서 teacher forcing을 통해 학습을 수행할 때에도, 너무나도 쉬운 나머지 encoder로부터 많은 정보를 받을 필요가 없어지게 됩니다. 예를 들어 아래와 같이 2 또는 3에 대해서 학습할 때, 한번의 도움만 있으면 충분하지 않을까요?
 
-![2 or 3](no_image)
+![MNIST 2와 3은 일부 row까지는 매우 비슷한 전개를 보일 것](/assets/images/20200624/7.png)
 
 그럼 encoder는 주어진 샘플에 대해서 많은 정보를 인코딩하지 않도록 학습될겁니다. 이것은 결국 추론 단계에서 비정상 샘플이 주어졌을 때, 안좋은 영향을 끼치게 될 것입니다. 이렇게 encoder가 어떤 샘플이 주어지든 비슷한 latent representation으로 인코딩하게 되는 현상을 posterior collapse라고 부릅니다. 물론 위의 예제에서처럼 어쨌든 2와 3을 구분하기 위한 정보가 어느정도는 담겨있을 것이기 때문에, 아무런 정보가 없지는 않겠지만 posterior collapse의 경향이 나타난다고 볼 수 있습니다.
 
@@ -168,7 +168,7 @@ $$
 
 그럼 이런 posterior collapse가 심하게 존재하고 있는 상황에서는 인코더에 어떤 샘플이 주어지더라도 인코더의 출력값 latent representation $z$ 는 변화가 없을(KLD term이 0이 될) 것이기 때문에, 디코더는 generation형식으로 inference를 수행하게 되면 어떤 샘플이 들어오든 항상 같은 출력값을 뱉어내게 됩니다. 마치 Generative Adversarial Networks (GAN)에서의 mode collapse와 비슷한 현상이 결과로 나타나는 것이지요. -- 이러한 현상이 나타나는 원인은 다릅니다.
 
-따라서 이러한 VAE의 posterior collapse를 해결하기 위한 연구들도 많이 이루어져 왔습니다. 하지만 대부분은 text domain에서의 문제 셋팅(discrete value + variable length)에 집중하고 있고, continuous data에 대한 이상탐지 문제에서의 posterior collapse 현상에 대한 해결책을 제시하는 연구는 아직 많지 않은 것이 사실입니다. 다행히도 기존의 연구들이 집중하고 있는 문제 셋팅이 이상탐지에 비해서 좀 더 어려운 문제 셋팅이다보니, 기존의 연구들로부터 많은 도움은 받을 수 있겠지만 본격적인 연구가 이루어지지 않았다는 것이죠. 따라서 sequential modeling을 활용한 이상탐지 문제 해결을 위한 연구들이 본격적으로 많이 이루어져야 함을 알 수 있습니다.
+따라서 이러한 VAE의 posterior collapse를 해결하기 위한 연구들[7, 8, 9, 10, 11]도 많이 이루어져 왔습니다. 하지만 대부분은 text domain에서의 문제 셋팅(discrete value + variable length)에 집중하고 있고, continuous data에 대한 이상탐지 문제에서의 posterior collapse 현상에 대한 해결책을 제시하는 연구는 아직 많지 않은 것이 사실입니다. 다행히도 기존의 연구들이 집중하고 있는 문제 셋팅이 이상탐지에 비해서 좀 더 어려운 문제 셋팅이다보니, 기존의 연구들로부터 많은 도움은 받을 수 있겠지만 본격적인 연구가 이루어지지 않았다는 것이죠. 따라서 sequential modeling을 활용한 이상탐지 문제 해결을 위한 연구들이 본격적으로 많이 이루어져야 함을 알 수 있습니다.
 
 ## Conclusion
 
@@ -180,18 +180,17 @@ $$
 - [2] [Ki Hyun Kim, Autoencoder based Anomaly Detection, blog, 2020](https://kh-kim.github.io/blog/2019/12/15/Autoencoder-based-anomaly-detection.html)
 - [3] [Ki Hyun Kim, Introduction to Deep Anomaly Detection, blog, 2020](https://kh-kim.github.io/blog/2019/12/12/Deep-Anomaly-Detection.html)
 - [4] [Ki Hyun Kim, Operational AI: Building a Lifelong Learning Anomaly Detection System, DEVIEW, 2019](https://deview.kr/2019/schedule/286)
-- [5] Ki Hyun Kim et al., Rapp: Novelty Detection with Reconstruction along Projection Pathway, ICLR, 2020
-- [1] [Inference Suboptimality in Variational Autoencoders](https://arxiv.org/pdf/1801.03558.pdf)
-- [2] [Semi-Amortized Variational Autoencoders](https://arxiv.org/pdf/1802.02550.pdf)
-- [3] [VARIATIONAL AUTOENCODERS FOR TEXT MODELING WITHOUT WEAKENING THE DECODER](https://openreview.net/pdf?id=H1eZ6sRcFm)
-- [4] [Re-balancing Variational Autoencoder Loss for Molecule Sequence Generation](https://arxiv.org/pdf/1910.00698.pdf)
-- [5] [InfoVAE: Balancing Learning and Inference in Variational Autoencoders](https://arxiv.org/pdf/1706.02262.pdf)
-- [6] [LAGGING INFERENCE NETWORKS AND POSTERIOR COLLAPSE IN VARIATIONAL AUTOENCODERS](https://openreview.net/pdf?id=rylDfnCqF7)
-- [7] [Variational Attention for Sequence-to-Sequence Models](https://arxiv.org/pdf/1712.08207.pdf)
-- [8] [Kieu et al., Outlier Detection for Time Series with Recurrent Autoencoder Ensembles, IJCAI, 2019](https://www.ijcai.org/Proceedings/2019/0378.pdf)
-- [9] [Malhotra et al., LSTM-based Encoder-Decoder for Multi-sensor Anomaly Detection, ICML Workshop, 2016](https://arxiv.org/pdf/1607.00148.pdf)
-- [11] [pavithrasv, Timeseries anomaly detection using an Autoencoder, Keras Tutorial, 2020](https://keras.io/examples/timeseries/timeseries_anomaly_detection/)
-- [12] [Park, Jinman, RNN based Time-series Anomaly Detector Model Implemented in Pytorch, GitHub, 2018](https://github.com/chickenbestlover/RNN-Time-series-Anomaly-Detection)
+- [5] [Ki Hyun Kim et al., Rapp: Novelty Detection with Reconstruction along Projection Pathway, ICLR, 2020](https://openreview.net/forum?id=HkgeGeBYDB)
+- [6] [Bahuleyan et al., Variational Attention for Sequence-to-Sequence Models, ICCL, 2018](https://arxiv.org/pdf/1712.08207.pdf)
+- [7] [Cremer et al., Inference Suboptimality in Variational Autoencoders, ICML, 2018](https://arxiv.org/pdf/1801.03558.pdf)
+- [8] [Yoon Kim et al., Semi-Amortized Variational Autoencoders, ICML, 2018](https://arxiv.org/pdf/1802.02550.pdf)
+- [9] [Yan et al., Re-balancing Variational Autoencoder Loss for Molecule Sequence Generation, ArXiv, 2019](https://arxiv.org/pdf/1910.00698.pdf)
+- [10] [Zhao et al., InfoVAE: Balancing Learning and Inference in Variational Autoencoders, AAAI, 2019](https://arxiv.org/pdf/1706.02262.pdf)
+- [11] [He et al., LAGGING INFERENCE NETWORKS AND POSTERIOR COLLAPSE IN VARIATIONAL AUTOENCODERS, ICLR, 2019](https://openreview.net/pdf?id=rylDfnCqF7)
+- [12] [Kieu et al., Outlier Detection for Time Series with Recurrent Autoencoder Ensembles, IJCAI, 2019](https://www.ijcai.org/Proceedings/2019/0378.pdf)
+- [13] [Malhotra et al., LSTM-based Encoder-Decoder for Multi-sensor Anomaly Detection, ICML Workshop, 2016](https://arxiv.org/pdf/1607.00148.pdf)
+- [14] [pavithrasv, Timeseries anomaly detection using an Autoencoder, Keras Tutorial, 2020](https://keras.io/examples/timeseries/timeseries_anomaly_detection/)
+- [15] [Park, Jinman, RNN based Time-series Anomaly Detector Model Implemented in Pytorch, GitHub, 2018](https://github.com/chickenbestlover/RNN-Time-series-Anomaly-Detection)
 
 
 <!--
